@@ -1,0 +1,889 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BroilerOS | Farm Management</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg:#f5f7f5;
+  --white:#ffffff;
+  --dark:#17251e;
+  --muted:#829087;
+  --green:#19764a;
+  --green2:#e8f4ec;
+  --border:#e8ece8;
+  --orange:#e89a42;
+  --red:#d65d5d;
+  --shadow:0 5px 25px rgba(20,50,30,.045);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--dark);
+  font-family:'DM Sans',sans-serif;font-size:14px;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:245px;background:#fff;border-right:1px solid var(--border);
+  padding:27px 18px;position:fixed;inset:0 auto 0 0;z-index:5;
+}
+.logo{display:flex;align-items:center;gap:11px;padding:0 9px 35px}
+.logo-icon{
+  width:39px;height:39px;background:var(--green);color:white;
+  border-radius:12px;display:grid;place-items:center;font-size:20px;
+}
+.logo strong{font:800 18px Manrope}
+.logo small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.nav-label{font-size:10px;color:#a0aaa2;font-weight:800;letter-spacing:1.4px;padding:12px 12px}
+.nav-btn{
+  border:0;background:transparent;width:100%;text-align:left;
+  padding:12px;border-radius:9px;margin-bottom:4px;
+  color:#66736b;font-weight:600;display:flex;align-items:center;gap:12px;
+}
+.nav-btn:hover,.nav-btn.active{background:var(--green2);color:var(--green)}
+.nav-btn span{font-size:17px;width:20px}
+.sidebar-bottom{
+  position:absolute;bottom:25px;left:18px;right:18px;
+  background:#f5f8f5;border-radius:12px;padding:14px;
+}
+.sidebar-bottom small{color:var(--muted)}
+.main{margin-left:245px;width:calc(100% - 245px);padding:30px 36px 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;gap:15px}
+.topbar h2{font:800 23px Manrope;margin:0}
+.topbar p{color:var(--muted);margin:5px 0 0}
+.top-right{display:flex;align-items:center;gap:12px}
+.date{color:var(--muted);font-size:12px}
+.avatar{width:38px;height:38px;background:var(--green2);color:var(--green);display:grid;place-items:center;border-radius:50%;font-weight:800}
+.page{display:none}
+.page.active{display:block}
+.section-title{font:800 18px Manrope;margin:28px 0 15px}
+.grid{display:grid;gap:16px}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{
+ background:white;border:1px solid var(--border);border-radius:14px;
+ padding:20px;box-shadow:var(--shadow);min-width:0;
+}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-icon{width:37px;height:37px;border-radius:10px;background:var(--green2);display:grid;place-items:center;font-size:18px}
+.stat-label{color:var(--muted);font-size:12px;font-weight:600}
+.stat-value{font:800 26px Manrope;margin-top:15px;letter-spacing:-1px}
+.stat-foot{font-size:11px;color:var(--muted);margin-top:6px}
+.green{color:var(--green)}
+.orange{color:var(--orange)}
+.red{color:var(--red)}
+.panel-grid{grid-template-columns:1.65fr 1fr;margin-top:17px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}
+.panel-head h3{font:800 15px Manrope;margin:0}
+.panel-head small{color:var(--muted)}
+.chart-wrap{height:260px;position:relative}
+canvas{width:100%;height:100%}
+.btn{
+ border:0;background:var(--green);color:white;padding:11px 16px;
+ border-radius:9px;font-weight:700;font-size:12px;
+}
+.btn:hover{background:#125b38}
+.btn-light{background:var(--green2);color:var(--green)}
+.btn-light:hover{background:#d9eddf}
+.btn-danger{background:#fff0f0;color:var(--red)}
+.btn-small{padding:8px 11px;font-size:11px}
+.actions{display:flex;flex-wrap:wrap;gap:9px}
+.activity{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.activity:last-child{border:0}
+.activity-icon{width:34px;height:34px;border-radius:9px;background:var(--green2);display:grid;place-items:center}
+.activity strong{font-size:12px}
+.activity small{display:block;color:var(--muted);margin-top:5px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+th{text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.8px;padding:13px 12px;border-bottom:1px solid var(--border)}
+td{padding:15px 12px;border-bottom:1px solid var(--border);font-size:12px}
+tr:last-child td{border:0}
+.tag{padding:5px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--green2);color:var(--green)}
+.tag.pending{background:#fff4e5;color:#b87926}
+.tag.danger{background:#fff0f0;color:var(--red)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:11px;color:#647168;font-weight:700}
+.field input,.field select{
+ width:100%;padding:12px;border:1px solid var(--border);
+ border-radius:9px;outline:none;background:white;color:var(--dark);
+}
+.field input:focus,.field select:focus{border-color:var(--green)}
+.full{grid-column:1/-1}
+.modal{
+ display:none;position:fixed;inset:0;background:#14251d88;
+ z-index:20;align-items:center;justify-content:center;padding:15px;
+}
+.modal.show{display:flex}
+.modal-box{background:white;border-radius:17px;padding:25px;width:100%;max-width:510px;max-height:90vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.modal-head h3{font:800 18px Manrope;margin:0}
+.close{border:0;background:#f2f5f2;border-radius:8px;padding:8px 11px}
+.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.batch-banner{
+ background:#193c2a;color:white;padding:24px;border-radius:15px;
+ display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px;
+}
+.batch-banner h2{font:800 21px Manrope;margin:7px 0}
+.batch-banner p{color:#c5d8cb;margin:0;font-size:12px}
+.mobile-menu{display:none}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+ .sidebar{transform:translateX(-100%);transition:.25s}
+ .sidebar.open{transform:translateX(0)}
+ .main{margin:0;width:100%;padding:20px 15px 45px}
+ .mobile-menu{display:block;border:0;background:white;padding:10px;border-radius:8px}
+ .topbar{align-items:flex-start}
+ .topbar h2{font-size:19px}
+ .date{display:none}
+ .panel-grid{grid-template-columns:1fr}
+ .stats{gap:9px}
+ .card{padding:15px}
+ .stat-value{font-size:21px}
+ .form-grid{grid-template-columns:1fr}
+ .full{grid-column:auto}
+ .batch-banner{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-icon">♟</div>
+    <div><strong>BroilerOS</strong><small>FARM MANAGEMENT</small></div>
+  </div>
+  <div class="nav-label">WORKSPACE</div>
+  <button class="nav-btn active" data-page="dashboard"><span>▦</span> Overview</button>
+  <button class="nav-btn" data-page="weights"><span>⚖</span> Weight tracking</button>
+  <button class="nav-btn" data-page="feed"><span>♧</span> Feed management</button>
+  <button class="nav-btn" data-page="health"><span>✚</span> Health & vaccines</button>
+  <button class="nav-btn" data-page="mortality"><span>♥</span> Mortality records</button>
+  <div class="nav-label">BUSINESS</div>
+  <button class="nav-btn" data-page="finance"><span>▤</span> Expenses & sales</button>
+  <button class="nav-btn" data-page="batch"><span>▣</span> Batch settings</button>
+  <div class="sidebar-bottom">
+    <strong>BroilerOS MVP</strong><br>
+    <small>Your farm. Your data. Your decisions.</small>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+ <div style="display:flex;align-items:center;gap:12px">
+  <button class="mobile-menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+  <div>
+   <h2 id="pageTitle">Farm overview</h2>
+   <p id="pageSubtitle">Monitor your flock's performance.</p>
+  </div>
+ </div>
+ <div class="top-right">
+  <div class="date" id="today"></div>
+  <div class="avatar">F</div>
+ </div>
+</header>
+
+<!-- DASHBOARD -->
+<section class="page active" id="dashboard">
+ <div class="batch-banner">
+  <div>
+   <small style="color:#b9d6c4">CURRENT PRODUCTION BATCH</small>
+   <h2 id="dashBatch">My Broiler Batch</h2>
+   <p id="dashAge">Set your chick arrival date in batch settings.</p>
+  </div>
+  <button class="btn" style="background:white;color:#193c2a" onclick="showPage('batch')">Manage batch →</button>
+ </div>
+ <div class="grid stats">
+  <div class="card">
+   <div class="stat-top"><span class="stat-label">LIVE BIRDS</span><div class="stat-icon">🐔</div></div>
+   <div class="stat-value" id="liveBirds">0</div>
+   <div class="stat-foot">Birds currently alive</div>
+  </div>
+  <div class="card">
+   <div class="stat-top"><span class="stat-label">AVERAGE WEIGHT</span><div class="stat-icon">⚖</div></div>
+   <div class="stat-value" id="avgWeight">0 g</div>
+   <div class="stat-foot">Latest recorded average</div>
+  </div>
+  <div class="card">
+   <div class="stat-top"><span class="stat-label">FEED REMAINING</span><div class="stat-icon">🌾</div></div>
+   <div class="stat-value" id="feedStock">0 kg</div>
+   <div class="stat-foot">Current feed inventory</div>
+  </div>
+  <div class="card">
+   <div class="stat-top"><span class="stat-label">TOTAL MORTALITY</span><div class="stat-icon">♥</div></div>
+   <div class="stat-value" id="mortality">0</div>
+   <div class="stat-foot">Recorded deaths</div>
+  </div>
+ </div>
+
+ <div class="grid panel-grid">
+  <div class="card">
+   <div class="panel-head">
+    <div><h3>Growth performance</h3><small>Average weight over time</small></div>
+    <button class="btn btn-light btn-small" onclick="showPage('weights')">Add weight +</button>
+   </div>
+   <div class="chart-wrap"><canvas id="dashboardChart"></canvas></div>
+  </div>
+  <div class="card">
+   <div class="panel-head"><h3>Upcoming activities</h3><small>Health calendar</small></div>
+   <div id="upcoming"></div>
+  </div>
+ </div>
+
+ <h3 class="section-title">Quick actions</h3>
+ <div class="actions">
+  <button class="btn" onclick="openModal('weightModal')">+ Record weight</button>
+  <button class="btn btn-light" onclick="openModal('feedModal')">+ Record feed</button>
+  <button class="btn btn-light" onclick="openModal('healthModal')">+ Add vaccine</button>
+  <button class="btn btn-light" onclick="openModal('expenseModal')">+ Add expense</button>
+ </div>
+</section>
+
+<!-- WEIGHTS -->
+<section class="page" id="weights">
+ <div class="card">
+  <div class="panel-head">
+   <div><h3>Flock growth chart</h3><small>Track changes in average body weight</small></div>
+   <button class="btn" onclick="openModal('weightModal')">+ Add measurement</button>
+  </div>
+  <div class="chart-wrap"><canvas id="weightChart"></canvas></div>
+ </div>
+ <div class="card" style="margin-top:17px">
+  <div class="panel-head"><h3>Weight history</h3><small>All recorded measurements</small></div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Date</th><th>Age</th><th>Sample size</th><th>Average weight</th><th>Minimum</th><th>Maximum</th><th></th></tr></thead>
+   <tbody id="weightRows"></tbody>
+  </table></div>
+ </div>
+</section>
+
+<!-- FEED -->
+<section class="page" id="feed">
+ <div class="grid stats">
+  <div class="card"><div class="stat-label">TOTAL PURCHASED</div><div class="stat-value" id="feedPurchased">0 kg</div></div>
+  <div class="card"><div class="stat-label">TOTAL FED</div><div class="stat-value" id="feedConsumed">0 kg</div></div>
+  <div class="card"><div class="stat-label">CURRENT STOCK</div><div class="stat-value" id="feedRemaining">0 kg</div></div>
+  <div class="card"><div class="stat-label">FEED COST</div><div class="stat-value" id="feedCost">KSh 0</div></div>
+ </div>
+ <div class="card" style="margin-top:17px">
+  <div class="panel-head"><div><h3>Feed records</h3><small>Purchases and daily consumption</small></div>
+   <button class="btn" onclick="openModal('feedModal')">+ Record feed</button>
+  </div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Quantity</th><th>Cost</th><th>Notes</th><th></th></tr></thead>
+   <tbody id="feedRows"></tbody>
+  </table></div>
+ </div>
+</section>
+
+<!-- HEALTH -->
+<section class="page" id="health">
+ <div class="card">
+  <div class="panel-head"><div><h3>Vaccination & health calendar</h3><small>Maintain your flock's health records</small></div>
+   <button class="btn" onclick="openModal('healthModal')">+ Add activity</button>
+  </div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Activity</th><th>Scheduled date</th><th>Age</th><th>Method / Notes</th><th>Status</th><th>Action</th></tr></thead>
+   <tbody id="healthRows"></tbody>
+  </table></div>
+  <p style="color:var(--muted);font-size:11px;margin-top:17px">Important: Vaccination dates and products must be confirmed with the hatchery vaccination record and a qualified poultry veterinarian. This calendar is a record-keeping tool, not a veterinary prescription.</p>
+ </div>
+</section>
+
+<!-- MORTALITY -->
+<section class="page" id="mortality">
+ <div class="grid stats">
+  <div class="card"><div class="stat-label">INITIAL BIRDS</div><div class="stat-value" id="initialBirds">0</div></div>
+  <div class="card"><div class="stat-label">DEATHS</div><div class="stat-value red" id="deathCount">0</div></div>
+  <div class="card"><div class="stat-label">LIVE BIRDS</div><div class="stat-value green" id="aliveCount">0</div></div>
+  <div class="card"><div class="stat-label">MORTALITY RATE</div><div class="stat-value" id="deathRate">0%</div></div>
+ </div>
+ <div class="card" style="margin-top:17px">
+  <div class="panel-head"><h3>Mortality history</h3>
+   <button class="btn" onclick="openModal('deathModal')">+ Record mortality</button>
+  </div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Date</th><th>Number</th><th>Age</th><th>Cause / Observation</th><th></th></tr></thead>
+   <tbody id="deathRows"></tbody>
+  </table></div>
+ </div>
+</section>
+
+<!-- FINANCE -->
+<section class="page" id="finance">
+ <div class="grid stats">
+  <div class="card"><div class="stat-label">TOTAL EXPENSES</div><div class="stat-value" id="totalExpenses">KSh 0</div></div>
+  <div class="card"><div class="stat-label">TOTAL REVENUE</div><div class="stat-value" id="totalRevenue">KSh 0</div></div>
+  <div class="card"><div class="stat-label">NET POSITION</div><div class="stat-value" id="netPosition">KSh 0</div></div>
+  <div class="card"><div class="stat-label">COST PER LIVE BIRD</div><div class="stat-value" id="costBird">KSh 0</div></div>
+ </div>
+ <div class="card" style="margin-top:17px">
+  <div class="panel-head"><h3>Financial transactions</h3>
+   <div class="actions">
+    <button class="btn btn-light" onclick="openModal('expenseModal')">+ Expense</button>
+    <button class="btn" onclick="openModal('saleModal')">+ Sale</button>
+   </div>
+  </div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th><th></th></tr></thead>
+   <tbody id="financeRows"></tbody>
+  </table></div>
+ </div>
+</section>
+
+<!-- BATCH SETTINGS -->
+<section class="page" id="batch">
+ <div class="card" style="max-width:650px">
+  <h3 style="font:800 17px Manrope">Production batch details</h3>
+  <p style="color:var(--muted);font-size:12px">Configure the flock currently being managed.</p>
+  <form id="batchForm">
+   <div class="form-grid">
+    <div class="field full"><label>Batch name</label><input id="batchName" required placeholder="e.g. November Batch 01"></div>
+    <div class="field"><label>Chick arrival date</label><input id="startDate" type="date" required></div>
+    <div class="field"><label>Initial number of chicks</label><input id="birdCount" type="number" min="1" required></div>
+    <div class="field"><label>Breed</label><input id="breed" placeholder="e.g. Cobb 500"></div>
+    <div class="field"><label>Supplier</label><input id="supplier" placeholder="Supplier name"></div>
+    <div class="field"><label>Purchase price (KSh)</label><input id="chickCost" type="number" min="0"></div>
+    <div class="field"><label>Target sale age (days)</label><input id="targetAge" type="number" min="1" value="42"></div>
+   </div>
+   <button class="btn" style="margin-top:20px">Save batch details</button>
+  </form>
+ </div>
+</section>
+
+</main>
+</div>
+
+<!-- MODALS -->
+
+<div class="modal" id="weightModal">
+ <div class="modal-box">
+  <div class="modal-head"><h3>Record flock weight</h3><button class="close" onclick="closeModal('weightModal')">✕</button></div>
+  <form id="weightForm">
+   <div class="form-grid">
+    <div class="field"><label>Date weighed</label><input type="date" id="wDate" required></div>
+    <div class="field"><label>Number of birds sampled</label><input type="number" id="wSample" min="1" required></div>
+    <div class="field"><label>Average weight (grams)</label><input type="number" id="wAverage" min="1" required></div>
+    <div class="field"><label>Lowest weight (grams)</label><input type="number" id="wMin" min="1"></div>
+    <div class="field"><label>Highest weight (grams)</label><input type="number" id="wMax" min="1"></div>
+    <div class="field full"><label>Observations</label><input id="wNotes" placeholder="Optional notes"></div>
+   </div>
+   <div class="form-actions"><button type="button" class="btn btn-light" onclick="closeModal('weightModal')">Cancel</button><button class="btn">Save measurement</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="modal" id="feedModal">
+ <div class="modal-box">
+  <div class="modal-head"><h3>Record feed activity</h3><button class="close" onclick="closeModal('feedModal')">✕</button></div>
+  <form id="feedForm">
+   <div class="form-grid">
+    <div class="field"><label>Date</label><input type="date" id="fDate" required></div>
+    <div class="field"><label>Transaction</label><select id="fType"><option value="purchase">Feed purchase</option><option value="consumption">Feed consumed</option></select></div>
+    <div class="field"><label>Feed category</label><select id="fCategory"><option>Starter</option><option>Grower</option><option>Finisher</option><option>Other</option></select></div>
+    <div class="field"><label>Quantity (kg)</label><input type="number" id="fQty" min="0.01" step=".01" required></div>
+    <div class="field"><label>Total cost (KSh)</label><input type="number" id="fCost" min="0"></div>
+    <div class="field"><label>Supplier / Notes</label><input id="fNotes"></div>
+   </div>
+   <div class="form-actions"><button type="button" class="btn btn-light" onclick="closeModal('feedModal')">Cancel</button><button class="btn">Save record</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="modal" id="healthModal">
+ <div class="modal-box">
+  <div class="modal-head"><h3>Health & vaccination record</h3><button class="close" onclick="closeModal('healthModal')">✕</button></div>
+  <form id="healthForm">
+   <div class="form-grid">
+    <div class="field full"><label>Activity / vaccine name</label><input id="hName" required placeholder="Enter vaccine or health activity"></div>
+    <div class="field"><label>Scheduled date</label><input type="date" id="hDate" required></div>
+    <div class="field"><label>Activity type</label><select id="hType"><option>Vaccination</option><option>Medication</option><option>Vitamins</option><option>Health check</option><option>Other</option></select></div>
+    <div class="field"><label>Administration method</label><input id="hMethod" placeholder="e.g. Drinking water"></div>
+    <div class="field"><label>Status</label><select id="hStatus"><option>Pending</option><option>Completed</option></select></div>
+    <div class="field full"><label>Notes / batch number / veterinary instructions</label><input id="hNotes"></div>
+   </div>
+   <div class="form-actions"><button type="button" class="btn btn-light" onclick="closeModal('healthModal')">Cancel</button><button class="btn">Save activity</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="modal" id="deathModal">
+ <div class="modal-box">
+  <div class="modal-head"><h3>Record mortality</h3><button class="close" onclick="closeModal('deathModal')">✕</button></div>
+  <form id="deathForm">
+   <div class="form-grid">
+    <div class="field"><label>Date</label><input id="dDate" type="date" required></div>
+    <div class="field"><label>Number of deaths</label><input id="dQty" type="number" min="1" required></div>
+    <div class="field full"><label>Cause / symptoms / observations</label><input id="dCause" placeholder="Record observations"></div>
+   </div>
+   <div class="form-actions"><button type="button" class="btn btn-light" onclick="closeModal('deathModal')">Cancel</button><button class="btn">Save record</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="modal" id="expenseModal">
+ <div class="modal-box">
+  <div class="modal-head"><h3>Record farm expense</h3><button class="close" onclick="closeModal('expenseModal')">✕</button></div>
+  <form id="expenseForm">
+   <div class="form-grid">
+    <div class="field"><label>Date</label><input id="eDate" type="date" required></div>
+    <div class="field"><label>Category</label><select id="eCategory"><option>Chicks</option><option>Feed</option><option>Vaccines</option><option>Medication</option><option>Transport</option><option>Bedding</option><option>Labour</option><option>Other</option></select></div>
+    <div class="field full"><label>Description</label><input id="eDesc" required></div>
+    <div class="field full"><label>Amount (KSh)</label><input id="eAmount" type="number" min="0.01" required></div>
+   </div>
+   <div class="form-actions"><button type="button" class="btn btn-light" onclick="closeModal('expenseModal')">Cancel</button><button class="btn">Save expense</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="modal" id="saleModal">
+ <div class="modal-box">
+  <div class="modal-head"><h3>Record chicken sale</h3><button class="close" onclick="closeModal('saleModal')">✕</button></div>
+  <form id="saleForm">
+   <div class="form-grid">
+    <div class="field"><label>Date</label><input id="sDate" type="date" required></div>
+    <div class="field"><label>Birds sold</label><input id="sQty" type="number" min="1" required></div>
+    <div class="field"><label>Price per bird (KSh)</label><input id="sPrice" type="number" min="0.01" required></div>
+    <div class="field"><label>Average weight (kg)</label><input id="sWeight" type="number" min="0" step=".01"></div>
+   </div>
+   <div class="form-actions"><button type="button" class="btn btn-light" onclick="closeModal('saleModal')">Cancel</button><button class="btn">Save sale</button></div>
+  </form>
+ </div>
+</div>
+
+<script>
+// ---------------- DATA ----------------
+
+const KEY = 'broilerOS_v1';
+
+const defaults = {
+ batch:{name:'My Broiler Batch',date:'',birds:0,breed:'',supplier:'',chickCost:0,targetAge:42},
+ weights:[],
+ feeds:[],
+ health:[],
+ deaths:[],
+ finances:[]
+};
+
+let db;
+try {
+ db = {...defaults,...JSON.parse(localStorage.getItem(KEY) || '{}')};
+} catch {
+ db = structuredClone(defaults);
+}
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+ render();
+}
+
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0,10);
+const money = n => 'KSh '+Number(n||0).toLocaleString('en-KE',{maximumFractionDigits:2});
+const fmt = n => Number(n||0).toLocaleString('en-KE',{maximumFractionDigits:2});
+const escapeHTML = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function ageAt(date){
+ if(!db.batch.date || !date) return '—';
+ return Math.max(0,Math.floor((new Date(date+'T00:00:00')-new Date(db.batch.date+'T00:00:00'))/86400000))+1;
+}
+
+function ageNow(){return ageAt(today())}
+
+function deathsTotal(){return db.deaths.reduce((s,x)=>s+Number(x.qty),0)}
+
+function soldTotal(){
+ return db.finances.filter(x=>x.type==='Sale').reduce((s,x)=>s+Number(x.qty||0),0);
+}
+
+function live(){
+ return Math.max(0,Number(db.batch.birds||0)-deathsTotal()-soldTotal());
+}
+
+function latestWeight(){
+ return [...db.weights].sort((a,b)=>b.date.localeCompare(a.date))[0];
+}
+
+function stock(){
+ return db.feeds.reduce((s,x)=>s+(x.type==='purchase'?Number(x.qty):-Number(x.qty)),0);
+}
+
+function expenses(){
+ return db.finances.filter(x=>x.type==='Expense').reduce((s,x)=>s+Number(x.amount),0);
+}
+function revenue(){
+ return db.finances.filter(x=>x.type==='Sale').reduce((s,x)=>s+Number(x.amount),0);
+}
+
+// ---------------- NAVIGATION ----------------
+
+const titles={
+ dashboard:['Farm overview',"Monitor your flock's performance."],
+ weights:['Weight tracking','Measure and monitor flock growth.'],
+ feed:['Feed management','Monitor feed purchases, consumption and inventory.'],
+ health:['Health & vaccinations','Manage your flock health calendar.'],
+ mortality:['Mortality records','Track bird losses and survival.'],
+ finance:['Expenses & sales','Understand the economics of your farm.'],
+ batch:['Batch settings','Configure your production batch.']
+};
+
+function showPage(id){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ $(id).classList.add('active');
+ document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
+ $('pageTitle').textContent=titles[id][0];
+ $('pageSubtitle').textContent=titles[id][1];
+ $('sidebar').classList.remove('open');
+ render();
+}
+
+document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+// ---------------- MODALS ----------------
+
+function openModal(id){
+ $(id).classList.add('show');
+ const dateFields=$(id).querySelectorAll('input[type=date]');
+ dateFields.forEach(x=>{if(!x.value)x.value=today()});
+}
+function closeModal(id){$(id).classList.remove('show')}
+
+document.querySelectorAll('.modal').forEach(m=>{
+ m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')});
+});
+
+function resetModal(id,form){
+ closeModal(id);
+ form.reset();
+}
+
+// ---------------- BATCH ----------------
+
+function loadBatch(){
+ $('batchName').value=db.batch.name;
+ $('startDate').value=db.batch.date;
+ $('birdCount').value=db.batch.birds||'';
+ $('breed').value=db.batch.breed||'';
+ $('supplier').value=db.batch.supplier||'';
+ $('chickCost').value=db.batch.chickCost||'';
+ $('targetAge').value=db.batch.targetAge||42;
+}
+
+$('batchForm').onsubmit=e=>{
+ e.preventDefault();
+ db.batch={
+  name:$('batchName').value,
+  date:$('startDate').value,
+  birds:Number($('birdCount').value),
+  breed:$('breed').value,
+  supplier:$('supplier').value,
+  chickCost:Number($('chickCost').value),
+  targetAge:Number($('targetAge').value)
+ };
+ save();
+ alert('Batch details saved successfully.');
+};
+
+// ---------------- WEIGHTS ----------------
+
+$('weightForm').onsubmit=e=>{
+ e.preventDefault();
+ const sample=Number($('wSample').value);
+ const avg=Number($('wAverage').value);
+ const min=Number($('wMin').value)||avg;
+ const max=Number($('wMax').value)||avg;
+ if(min>max || avg<min || avg>max){
+  alert('Check your minimum, average and maximum weights.');
+  return;
+ }
+ if(sample>live()){
+  alert('Sample size cannot exceed the number of live birds.');
+  return;
+ }
+ db.weights.push({
+  id:Date.now(),date:$('wDate').value,sample,
+  avg,min,max,notes:$('wNotes').value
+ });
+ resetModal('weightModal',e.target);
+ save();
+};
+
+function renderWeights(){
+ const rows=[...db.weights].sort((a,b)=>b.date.localeCompare(a.date));
+ $('weightRows').innerHTML=rows.length?rows.map(x=>`
+ <tr>
+ <td>${escapeHTML(x.date)}</td>
+ <td>Day ${ageAt(x.date)}</td>
+ <td>${x.sample}</td>
+ <td><strong>${fmt(x.avg)} g</strong></td>
+ <td>${fmt(x.min)} g</td>
+ <td>${fmt(x.max)} g</td>
+ <td><button class="btn btn-danger btn-small" onclick="removeItem('weights',${x.id})">Delete</button></td>
+ </tr>`).join(''):'<tr><td colspan="7" class="empty">No weight records yet. Add your first measurement.</td></tr>';
+}
+
+// ---------------- FEED ----------------
+
+$('feedForm').onsubmit=e=>{
+ e.preventDefault();
+ const type=$('fType').value;
+ const qty=Number($('fQty').value);
+ if(type==='consumption' && qty>stock()){
+  alert('You do not have enough recorded feed stock.');
+  return;
+ }
+ db.feeds.push({
+  id:Date.now(),date:$('fDate').value,type,
+  category:$('fCategory').value,qty,
+  cost:type==='purchase'?Number($('fCost').value):0,
+  notes:$('fNotes').value
+ });
+ resetModal('feedModal',e.target);
+ save();
+};
+
+function renderFeed(){
+ const purchased=db.feeds.filter(x=>x.type==='purchase').reduce((s,x)=>s+x.qty,0);
+ const consumed=db.feeds.filter(x=>x.type==='consumption').reduce((s,x)=>s+x.qty,0);
+ const cost=db.feeds.reduce((s,x)=>s+x.cost,0);
+ $('feedPurchased').textContent=fmt(purchased)+' kg';
+ $('feedConsumed').textContent=fmt(consumed)+' kg';
+ $('feedRemaining').textContent=fmt(stock())+' kg';
+ $('feedCost').textContent=money(cost);
+ $('feedStock').textContent=fmt(stock())+' kg';
+
+ const rows=[...db.feeds].sort((a,b)=>b.date.localeCompare(a.date));
+ $('feedRows').innerHTML=rows.length?rows.map(x=>`
+ <tr><td>${escapeHTML(x.date)}</td>
+ <td><span class="tag ${x.type==='purchase'?'':'pending'}">${x.type}</span></td>
+ <td>${escapeHTML(x.category)}</td><td>${fmt(x.qty)} kg</td>
+ <td>${money(x.cost)}</td><td>${escapeHTML(x.notes)}</td>
+ <td><button class="btn btn-danger btn-small" onclick="removeItem('feeds',${x.id})">Delete</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">No feed records yet.</td></tr>';
+}
+
+// ---------------- HEALTH ----------------
+
+$('healthForm').onsubmit=e=>{
+ e.preventDefault();
+ db.health.push({
+  id:Date.now(),name:$('hName').value,date:$('hDate').value,
+  type:$('hType').value,method:$('hMethod').value,
+  status:$('hStatus').value,notes:$('hNotes').value
+ });
+ resetModal('healthModal',e.target);
+ save();
+};
+
+function renderHealth(){
+ const rows=[...db.health].sort((a,b)=>a.date.localeCompare(b.date));
+ $('healthRows').innerHTML=rows.length?rows.map(x=>`
+ <tr><td><strong>${escapeHTML(x.name)}</strong><br><small>${escapeHTML(x.type)}</small></td>
+ <td>${escapeHTML(x.date)}</td><td>Day ${ageAt(x.date)}</td>
+ <td>${escapeHTML(x.method)} ${escapeHTML(x.notes)}</td>
+ <td><span class="tag ${x.status==='Completed'?'':'pending'}">${escapeHTML(x.status)}</span></td>
+ <td>
+ <button class="btn btn-light btn-small" onclick="toggleHealth(${x.id})">${x.status==='Completed'?'Reopen':'Complete'}</button>
+ <button class="btn btn-danger btn-small" onclick="removeItem('health',${x.id})">✕</button>
+ </td></tr>`).join(''):'<tr><td colspan="6" class="empty">No health activities recorded.</td></tr>';
+
+ const upcoming=db.health.filter(x=>x.status!=='Completed'&&x.date>=today()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+ $('upcoming').innerHTML=upcoming.length?upcoming.map(x=>`
+ <div class="activity"><div class="activity-icon">✚</div>
+ <div><strong>${escapeHTML(x.name)}</strong><small>${escapeHTML(x.date)} · ${escapeHTML(x.type)}</small></div></div>`).join(''):'<div class="empty">No upcoming activities.</div>';
+}
+
+function toggleHealth(id){
+ const x=db.health.find(x=>x.id===id);
+ if(x)x.status=x.status==='Completed'?'Pending':'Completed';
+ save();
+}
+
+// ---------------- MORTALITY ----------------
+
+$('deathForm').onsubmit=e=>{
+ e.preventDefault();
+ const qty=Number($('dQty').value);
+ if(qty>live()){
+  alert('Deaths cannot exceed the current live bird count.');
+  return;
+ }
+ db.deaths.push({
+  id:Date.now(),date:$('dDate').value,
+  qty,cause:$('dCause').value
+ });
+ resetModal('deathModal',e.target);
+ save();
+};
+
+function renderDeaths(){
+ const total=deathsTotal();
+ $('initialBirds').textContent=db.batch.birds;
+ $('deathCount').textContent=total;
+ $('aliveCount').textContent=live();
+ $('deathRate').textContent=db.batch.birds?fmt(total/db.batch.birds*100)+'%':'0%';
+ $('mortality').textContent=total;
+
+ const rows=[...db.deaths].sort((a,b)=>b.date.localeCompare(a.date));
+ $('deathRows').innerHTML=rows.length?rows.map(x=>`
+ <tr><td>${escapeHTML(x.date)}</td><td>${x.qty}</td>
+ <td>Day ${ageAt(x.date)}</td><td>${escapeHTML(x.cause)}</td>
+ <td><button class="btn btn-danger btn-small" onclick="removeItem('deaths',${x.id})">Delete</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">No mortality records.</td></tr>';
+}
+
+// ---------------- FINANCE ----------------
+
+$('expenseForm').onsubmit=e=>{
+ e.preventDefault();
+ db.finances.push({
+  id:Date.now(),date:$('eDate').value,type:'Expense',
+  description:$('eCategory').value+' - '+$('eDesc').value,
+  amount:Number($('eAmount').value)
+ });
+ resetModal('expenseModal',e.target);
+ save();
+};
+
+$('saleForm').onsubmit=e=>{
+ e.preventDefault();
+ const qty=Number($('sQty').value);
+ if(qty>live()){
+  alert('You cannot sell more birds than are currently alive.');
+  return;
+ }
+ const amount=qty*Number($('sPrice').value);
+ db.finances.push({
+  id:Date.now(),date:$('sDate').value,type:'Sale',
+  description:qty+' birds sold @ '+money($('sPrice').value)+' each',
+  amount,qty,weight:Number($('sWeight').value)||0
+ });
+ resetModal('saleModal',e.target);
+ save();
+};
+
+function renderFinance(){
+ const exp=expenses(),rev=revenue();
+ $('totalExpenses').textContent=money(exp);
+ $('totalRevenue').textContent=money(rev);
+ $('netPosition').textContent=money(rev-exp);
+ $('netPosition').className='stat-value '+(rev-exp>=0?'green':'red');
+ $('costBird').textContent=money(live()?exp/live():0);
+
+ const rows=[...db.finances].sort((a,b)=>b.date.localeCompare(a.date));
+ $('financeRows').innerHTML=rows.length?rows.map(x=>`
+ <tr><td>${escapeHTML(x.date)}</td>
+ <td><span class="tag ${x.type==='Sale'?'':'pending'}">${x.type}</span></td>
+ <td>${escapeHTML(x.description)}</td>
+ <td><strong>${money(x.amount)}</strong></td>
+ <td><button class="btn btn-danger btn-small" onclick="removeItem('finances',${x.id})">Delete</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">No financial records yet.</td></tr>';
+}
+
+// ---------------- CHART ----------------
+
+function drawChart(canvasId){
+ const canvas=$(canvasId);
+ if(!canvas || !canvas.parentElement.offsetWidth)return;
+ const rect=canvas.getBoundingClientRect();
+ const dpr=window.devicePixelRatio||1;
+ canvas.width=rect.width*dpr;
+ canvas.height=rect.height*dpr;
+ const ctx=canvas.getContext('2d');
+ ctx.scale(dpr,dpr);
+ const w=rect.width,h=rect.height;
+ const left=48,right=15,top=18,bottom=35;
+ const cw=w-left-right,ch=h-top-bottom;
+ const rows=[...db.weights].sort((a,b)=>a.date.localeCompare(b.date));
+
+ ctx.clearRect(0,0,w,h);
+ ctx.font='11px DM Sans';
+ ctx.fillStyle='#829087';
+ ctx.strokeStyle='#edf0ed';
+ ctx.lineWidth=1;
+
+ if(!rows.length){
+  ctx.textAlign='center';
+  ctx.fillText('Your growth graph will appear here once you add measurements.',w/2,h/2);
+  return;
+ }
+
+ const values=rows.map(x=>x.avg);
+ const min=Math.max(0,Math.min(...values)*.8);
+ const max=Math.max(...values)*1.15||100;
+ const range=max-min||1;
+
+ for(let i=0;i<=4;i++){
+  const y=top+ch*i/4;
+  const val=max-(range*i/4);
+  ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();
+  ctx.textAlign='right';ctx.fillStyle='#829087';
+  ctx.fillText(Math.round(val)+'g',left-9,y+4);
+ }
+
+ const px=i=>left+(rows.length===1?cw/2:i*cw/(rows.length-1));
+ const py=v=>top+ch-(v-min)/range*ch;
+
+ if(rows.length>1){
+  ctx.beginPath();
+  rows.forEach((r,i)=>i?ctx.lineTo(px(i),py(r.avg)):ctx.moveTo(px(i),py(r.avg)));
+  ctx.strokeStyle='#19764a';ctx.lineWidth=2.8;ctx.stroke();
+
+  ctx.lineTo(px(rows.length-1),top+ch);
+  ctx.lineTo(px(0),top+ch);ctx.closePath();
+  ctx.fillStyle='rgba(25,118,74,.08)';ctx.fill();
+ }
+
+ rows.forEach((r,i)=>{
+  ctx.beginPath();ctx.arc(px(i),py(r.avg),4.5,0,Math.PI*2);
+  ctx.fillStyle='#19764a';ctx.fill();
+  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#829087';ctx.font='10px DM Sans';ctx.textAlign='center';
+  ctx.fillText('Day '+ageAt(r.date),px(i),h-12);
+ });
+}
+
+// ---------------- DELETE ----------------
+
+function removeItem(collection,id){
+ if(!confirm('Delete this record?'))return;
+ db[collection]=db[collection].filter(x=>x.id!==id);
+ save();
+}
+
+// ---------------- RENDER ----------------
+
+function render(){
+ const b=db.batch;
+ $('dashBatch').textContent=b.name||'My Broiler Batch';
+ $('dashAge').textContent=b.date?'Day '+ageNow()+' · Started '+b.date:'Set your chick arrival date in batch settings.';
+ $('liveBirds').textContent=live();
+ $('avgWeight').textContent=latestWeight()?fmt(latestWeight().avg)+' g':'0 g';
+ $('feedStock').textContent=fmt(stock())+' kg';
+ $('today').textContent=new Date().toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+
+ renderWeights();
+ renderFeed();
+ renderHealth();
+ renderDeaths();
+ renderFinance();
+
+ requestAnimationFrame(()=>{
+  drawChart('dashboardChart');
+  drawChart('weightChart');
+ });
+}
+
+loadBatch();
+render();
+
+window.addEventListener('resize',()=>{
+ drawChart('dashboardChart');
+ drawChart('weightChart');
+});
+</script>
+</body>
+</html>
