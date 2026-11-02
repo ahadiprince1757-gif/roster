@@ -57,7 +57,7 @@ const Sidebar = ({ isOpen, onClose, onOpenReport }) => {
         </div>
         <div>
           <div className="brand-title">
-            BroilerOS <span className="brand-badge">PRO</span>
+            Rosestar <span className="brand-badge">PRO</span>
           </div>
           <div className="brand-sub">Poultry Intelligence</div>
         </div>

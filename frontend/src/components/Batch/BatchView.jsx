@@ -31,7 +31,7 @@ const BatchView = ({ onOpenReport }) => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(farmData, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `BroilerOS_${farmData.batch.name.replace(/\s+/g, '_')}_Backup.json`);
+    downloadAnchor.setAttribute('download', `Rosestar_${farmData.batch.name.replace(/\s+/g, '_')}_Backup.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();

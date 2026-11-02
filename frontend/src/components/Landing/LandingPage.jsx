@@ -25,9 +25,7 @@ const LandingPage = ({ onEnterApp }) => {
             alt="Logo"
             style={{ width: '26px', height: '26px', objectFit: 'contain' }}
           />
-          <span style={{ fontSize: '1rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-            BroilerOS
-          </span>
+            Rosestar
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -50,7 +48,7 @@ const LandingPage = ({ onEnterApp }) => {
         <div className="apple-logo-badge">
           <img
             src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
-            alt="BroilerOS Rooster Logo"
+            alt="Rosestar Rooster Logo"
           />
         </div>
 
@@ -118,7 +116,7 @@ const LandingPage = ({ onEnterApp }) => {
           marginTop: 'auto',
         }}
       >
-        BroilerOS · Your farm. Your data. Your decisions.
+        Rosestar · Your farm. Your data. Your decisions.
       </footer>
     </div>
   );

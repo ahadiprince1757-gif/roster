@@ -22,9 +22,9 @@ const MinimalNav = ({ onOpenQuickLog, onOpenReport }) => {
         <div className="min-brand" onClick={() => setActiveTab('landing')}>
           <img
             src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
-            alt="BroilerOS Logo"
+            alt="Rosestar Logo"
           />
-          <span>BroilerOS</span>
+          <span>Rosestar</span>
         </div>
 
         <div className="min-controls">

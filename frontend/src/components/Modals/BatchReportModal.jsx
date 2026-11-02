@@ -28,7 +28,7 @@ const BatchReportModal = ({ isOpen, onClose }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img
               src="/logo.png"
-              alt="BroilerOS Logo"
+              alt="Rosestar Logo"
               style={{
                 width: '52px',
                 height: '52px',
@@ -38,7 +38,7 @@ const BatchReportModal = ({ isOpen, onClose }) => {
             />
             <div>
               <h2 style={{ fontSize: '1.4rem', color: 'var(--primary)', marginBottom: '4px' }}>
-                BroilerOS Commercial Audit Report
+                Rosestar Commercial Audit Report
               </h2>
               <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                 Flock Batch: <strong>{farmData.batch.name || 'Alpha Batch'}</strong> · Breed: <strong>{farmData.batch.breed || 'Cobb 500'}</strong>
