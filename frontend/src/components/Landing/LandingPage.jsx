@@ -1,10 +1,12 @@
 import React from 'react';
 import { useFarm } from '../../context/FarmContext';
-import { Sun, Moon, ArrowRight, ShieldCheck, Scale, Wheat, Activity } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { Sun, Moon, ArrowRight, ShieldCheck, Scale, Wheat, Activity, LogIn } from 'lucide-react';
 import { formatNumber } from '../../utils/calculations';
 
 const LandingPage = ({ onEnterApp }) => {
   const { farmData, metrics, theme, toggleTheme } = useFarm();
+  const { user } = useAuth();
 
   return (
     <div className="apple-landing">
@@ -25,7 +27,9 @@ const LandingPage = ({ onEnterApp }) => {
             alt="Logo"
             style={{ width: '26px', height: '26px', objectFit: 'contain' }}
           />
+          <span style={{ fontWeight: 600, fontSize: '1rem', letterSpacing: '-0.02em' }}>
             Rosestar
+          </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -37,8 +41,19 @@ const LandingPage = ({ onEnterApp }) => {
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
 
+          {!user ? (
+            <button
+              className="apple-btn-sub"
+              style={{ padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              onClick={() => onEnterApp('login')}
+            >
+              <LogIn size={14} />
+              <span>Sign In</span>
+            </button>
+          ) : null}
+
           <button className="apple-btn-main" onClick={() => onEnterApp('dashboard')}>
-            Open Console →
+            {user ? 'Open Console →' : 'Launch Console →'}
           </button>
         </div>
       </nav>

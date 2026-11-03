@@ -11,6 +11,7 @@ import {
   HeartCrack,
   FileText,
   Home,
+  User,
   X
 } from 'lucide-react';
 
@@ -25,6 +26,7 @@ const MORE_NAV = [
   { id: 'mortality', label: 'Mortality Records', desc: 'Flock survivability & death logs', icon: HeartCrack },
   { id: 'finance', label: 'Expenses & Sales', desc: 'Cashflow ledger & profit margins', icon: Coins },
   { id: 'batch', label: 'Flock Settings', desc: 'Batch configuration & targets', icon: Settings2 },
+  { id: 'login', label: 'Farmer Account', desc: 'Google auth & farmer profile', icon: User },
   { id: 'landing', label: 'Landing Page', desc: 'Product introduction showcase', icon: Home },
 ];
 

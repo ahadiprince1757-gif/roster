@@ -11,6 +11,7 @@ import MortalityView from './components/Mortality/MortalityView';
 import FinanceView from './components/Finance/FinanceView';
 import BatchView from './components/Batch/BatchView';
 import PerformanceStandards from './components/Standards/PerformanceStandards';
+import LoginPage from './components/Auth/LoginPage';
 
 // Modals
 import AddWeightModal from './components/Modals/AddWeightModal';
@@ -38,6 +39,16 @@ function App() {
   if (activeTab === 'landing') {
     return (
       <LandingPage onEnterApp={(tab = 'dashboard') => setActiveTab(tab)} />
+    );
+  }
+
+  // If on Login Page, display dedicated minimalist authentication screen
+  if (activeTab === 'login') {
+    return (
+      <LoginPage
+        onNavigate={(tab) => setActiveTab(tab)}
+        onBack={() => setActiveTab('dashboard')}
+      />
     );
   }
 

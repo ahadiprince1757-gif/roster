@@ -9,12 +9,26 @@
  *   - Production → set in Vercel dashboard      → https://<render-app>.onrender.com
  */
 
+import { supabase } from './supabaseClient';
+
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 async function api(path, options = {}) {
   try {
+    const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+
+    // Attach Supabase access token if session exists
+    if (supabase) {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (data?.session?.access_token) {
+          headers['Authorization'] = `Bearer ${data.session.access_token}`;
+        }
+      } catch (_) {}
+    }
+
     const res = await fetch(`${BASE_URL}${path}`, {
-      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+      headers,
       ...options,
     });
     if (!res.ok) {
