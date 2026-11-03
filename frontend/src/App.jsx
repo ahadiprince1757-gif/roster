@@ -10,6 +10,7 @@ import HealthView from './components/Health/HealthView';
 import MortalityView from './components/Mortality/MortalityView';
 import FinanceView from './components/Finance/FinanceView';
 import BatchView from './components/Batch/BatchView';
+import PerformanceStandards from './components/Standards/PerformanceStandards';
 
 // Modals
 import AddWeightModal from './components/Modals/AddWeightModal';
@@ -78,6 +79,10 @@ function App() {
             onOpenExpenseModal={() => handleOpenModal('expense')}
             onOpenSaleModal={() => handleOpenModal('sale')}
           />
+        )}
+
+        {activeTab === 'standards' && (
+          <PerformanceStandards />
         )}
 
         {activeTab === 'batch' && (

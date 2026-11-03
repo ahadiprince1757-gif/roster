@@ -3,13 +3,14 @@ import { useFarm } from '../../context/FarmContext';
 import { Sun, Moon, Plus } from 'lucide-react';
 
 const TABS = [
-  { id: 'dashboard', label: 'Overview' },
-  { id: 'weights', label: 'Weights' },
-  { id: 'feed', label: 'Feed' },
-  { id: 'health', label: 'Health' },
-  { id: 'mortality', label: 'Mortality' },
-  { id: 'finance', label: 'Finances' },
-  { id: 'batch', label: 'Settings' },
+  { id: 'dashboard',  label: 'Overview' },
+  { id: 'weights',    label: 'Weights' },
+  { id: 'feed',       label: 'Feed' },
+  { id: 'health',     label: 'Health' },
+  { id: 'mortality',  label: 'Mortality' },
+  { id: 'finance',    label: 'Finances' },
+  { id: 'standards',  label: 'Standards' },
+  { id: 'batch',      label: 'Settings' },
 ];
 
 const MinimalNav = ({ onOpenQuickLog, onOpenReport }) => {
