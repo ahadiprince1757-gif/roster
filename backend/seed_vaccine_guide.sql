@@ -1,13 +1,65 @@
 -- ============================================================
--- Rosestar Farm App — Vaccination Guide Seed Data
--- Run AFTER schema_vaccine_guide.sql
--- Supabase Dashboard → SQL Editor → New Query → Run
+-- Rosestar Farm App — All-in-One Vaccine Guide Schema & Seed
+-- Run in: Supabase Dashboard → SQL Editor → New Query → Run
 -- ============================================================
--- Idempotent: uses INSERT ... ON CONFLICT DO NOTHING
--- so it is safe to run more than once.
+-- Self-contained: automatically creates the required tables
+-- if they don't already exist, then inserts/updates the data.
 -- ============================================================
 
--- ── Flock Type Definitions ────────────────────────────────────────────────────
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ── 1. Create Tables (if not exist) ───────────────────────────
+
+CREATE TABLE IF NOT EXISTS vaccine_guide (
+  id           TEXT PRIMARY KEY,
+  flock_types  TEXT[] NOT NULL,
+  timing       TEXT NOT NULL,
+  day_offset   INTEGER NOT NULL DEFAULT 1,
+  vaccine      TEXT NOT NULL,
+  protects     TEXT,
+  method       TEXT,
+  method_note  TEXT,
+  mandatory    BOOLEAN DEFAULT false,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS method_glossary (
+  id         TEXT PRIMARY KEY,
+  label      TEXT NOT NULL,
+  icon       TEXT,
+  plain      TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS flock_type_defs (
+  id          TEXT PRIMARY KEY,
+  label       TEXT NOT NULL,
+  icon        TEXT,
+  description TEXT,
+  colour      TEXT,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS auto_schedule (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  flock_type       TEXT NOT NULL,
+  vaccine_guide_id TEXT REFERENCES vaccine_guide(id) ON DELETE CASCADE,
+  sort_order       INTEGER NOT NULL DEFAULT 0,
+  created_at       TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_vaccine_guide_flock ON vaccine_guide USING gin(flock_types);
+CREATE INDEX IF NOT EXISTS idx_auto_schedule_type  ON auto_schedule(flock_type, sort_order);
+
+ALTER TABLE vaccine_guide   DISABLE ROW LEVEL SECURITY;
+ALTER TABLE method_glossary DISABLE ROW LEVEL SECURITY;
+ALTER TABLE flock_type_defs DISABLE ROW LEVEL SECURITY;
+ALTER TABLE auto_schedule   DISABLE ROW LEVEL SECURITY;
+
+
+-- ── 2. Seed Data ──────────────────────────────────────────────
+
+-- ── Flock Type Definitions ────────────────────────────────────
 INSERT INTO flock_type_defs (id, label, icon, description, colour) VALUES
   ('broiler',    'Broiler (Commercial)',   'broiler', 'Fast-growing chickens raised for meat, sold at 5–7 weeks. Only core vaccines are needed.', '#6366f1'),
   ('layer',      'Layer (Egg Production)', 'layer', 'Hens raised to produce eggs for 12–18 months. Require a full extended vaccination programme.', '#f59e0b'),

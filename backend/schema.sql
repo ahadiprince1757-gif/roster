@@ -114,3 +114,53 @@ alter table feeds         disable row level security;
 alter table health_events disable row level security;
 alter table deaths        disable row level security;
 alter table finances      disable row level security;
+
+-- ============================================================
+-- VACCINATION REFERENCE GUIDE TABLES
+-- ============================================================
+create table if not exists vaccine_guide (
+  id           text primary key,
+  flock_types  text[] not null,
+  timing       text not null,
+  day_offset   integer not null default 1,
+  vaccine      text not null,
+  protects     text,
+  method       text,
+  method_note  text,
+  mandatory    boolean default false,
+  created_at   timestamptz default now()
+);
+
+create table if not exists method_glossary (
+  id         text primary key,
+  label      text not null,
+  icon       text,
+  plain      text not null,
+  created_at timestamptz default now()
+);
+
+create table if not exists flock_type_defs (
+  id          text primary key,
+  label       text not null,
+  icon        text,
+  description text,
+  colour      text,
+  created_at  timestamptz default now()
+);
+
+create table if not exists auto_schedule (
+  id               uuid primary key default gen_random_uuid(),
+  flock_type       text not null,
+  vaccine_guide_id text references vaccine_guide(id) on delete cascade,
+  sort_order       integer not null default 0,
+  created_at       timestamptz default now()
+);
+
+create index if not exists idx_vaccine_guide_flock on vaccine_guide using gin(flock_types);
+create index if not exists idx_auto_schedule_type  on auto_schedule(flock_type, sort_order);
+
+alter table vaccine_guide   disable row level security;
+alter table method_glossary disable row level security;
+alter table flock_type_defs disable row level security;
+alter table auto_schedule   disable row level security;
+
