@@ -156,18 +156,18 @@ tr:last-child td{border:0}
 
 <aside class="sidebar" id="sidebar">
   <div class="logo">
-    <div class="logo-icon">♟</div>
+    <div class="logo-icon"></div>
     <div><strong>BroilerOS</strong><small>FARM MANAGEMENT</small></div>
   </div>
   <div class="nav-label">WORKSPACE</div>
-  <button class="nav-btn active" data-page="dashboard"><span>▦</span> Overview</button>
-  <button class="nav-btn" data-page="weights"><span>⚖</span> Weight tracking</button>
-  <button class="nav-btn" data-page="feed"><span>♧</span> Feed management</button>
-  <button class="nav-btn" data-page="health"><span>✚</span> Health & vaccines</button>
-  <button class="nav-btn" data-page="mortality"><span>♥</span> Mortality records</button>
+  <button class="nav-btn active" data-page="dashboard"><span></span> Overview</button>
+  <button class="nav-btn" data-page="weights"><span></span> Weight tracking</button>
+  <button class="nav-btn" data-page="feed"><span></span> Feed management</button>
+  <button class="nav-btn" data-page="health"><span></span> Health & vaccines</button>
+  <button class="nav-btn" data-page="mortality"><span></span> Mortality records</button>
   <div class="nav-label">BUSINESS</div>
-  <button class="nav-btn" data-page="finance"><span>▤</span> Expenses & sales</button>
-  <button class="nav-btn" data-page="batch"><span>▣</span> Batch settings</button>
+  <button class="nav-btn" data-page="finance"><span></span> Expenses & sales</button>
+  <button class="nav-btn" data-page="batch"><span></span> Batch settings</button>
   <div class="sidebar-bottom">
     <strong>BroilerOS MVP</strong><br>
     <small>Your farm. Your data. Your decisions.</small>
@@ -201,22 +201,22 @@ tr:last-child td{border:0}
  </div>
  <div class="grid stats">
   <div class="card">
-   <div class="stat-top"><span class="stat-label">LIVE BIRDS</span><div class="stat-icon">🐔</div></div>
+   <div class="stat-top"><span class="stat-label">LIVE BIRDS</span><div class="stat-icon"></div></div>
    <div class="stat-value" id="liveBirds">0</div>
    <div class="stat-foot">Birds currently alive</div>
   </div>
   <div class="card">
-   <div class="stat-top"><span class="stat-label">AVERAGE WEIGHT</span><div class="stat-icon">⚖</div></div>
+   <div class="stat-top"><span class="stat-label">AVERAGE WEIGHT</span><div class="stat-icon"></div></div>
    <div class="stat-value" id="avgWeight">0 g</div>
    <div class="stat-foot">Latest recorded average</div>
   </div>
   <div class="card">
-   <div class="stat-top"><span class="stat-label">FEED REMAINING</span><div class="stat-icon">🌾</div></div>
+   <div class="stat-top"><span class="stat-label">FEED REMAINING</span><div class="stat-icon"></div></div>
    <div class="stat-value" id="feedStock">0 kg</div>
    <div class="stat-foot">Current feed inventory</div>
   </div>
   <div class="card">
-   <div class="stat-top"><span class="stat-label">TOTAL MORTALITY</span><div class="stat-icon">♥</div></div>
+   <div class="stat-top"><span class="stat-label">TOTAL MORTALITY</span><div class="stat-icon"></div></div>
    <div class="stat-value" id="mortality">0</div>
    <div class="stat-foot">Recorded deaths</div>
   </div>
@@ -694,7 +694,7 @@ function renderHealth(){
 
  const upcoming=db.health.filter(x=>x.status!=='Completed'&&x.date>=today()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
  $('upcoming').innerHTML=upcoming.length?upcoming.map(x=>`
- <div class="activity"><div class="activity-icon">✚</div>
+ <div class="activity"><div class="activity-icon"></div>
  <div><strong>${escapeHTML(x.name)}</strong><small>${escapeHTML(x.date)} · ${escapeHTML(x.type)}</small></div></div>`).join(''):'<div class="empty">No upcoming activities.</div>';
 }
 

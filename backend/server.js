@@ -72,6 +72,6 @@ app.use((err, req, res, next) => {
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`🐔 Rosestar Farm API running on port ${PORT}`);
+  console.log(`Rosestar Farm API running on port ${PORT}`);
   console.log(`   Health check: http://localhost:${PORT}/api/health`);
 });

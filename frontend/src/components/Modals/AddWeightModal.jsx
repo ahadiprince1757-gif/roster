@@ -181,7 +181,7 @@ const AddWeightModal = ({ isOpen, onClose }) => {
               />
               {autoCalc && (
                 <div className="auto-calc-preview">
-                  <span>🐔 <strong>{autoCalc.count}</strong> birds</span>
+                  <span><strong>{autoCalc.count}</strong> birds</span>
                   <span>Avg: <strong>{autoCalc.avg}g</strong></span>
                   <span>Min: <strong>{autoCalc.min}g</strong></span>
                   <span>Max: <strong>{autoCalc.max}g</strong></span>
@@ -195,7 +195,7 @@ const AddWeightModal = ({ isOpen, onClose }) => {
           {adgPreview && (
             <div className="field full-width">
               <div className="calc-insight">
-                <span>📈 Auto-calculated at day <strong>{adgPreview.age}</strong>:</span>
+                <span>Auto-calculated at day <strong>{adgPreview.age}</strong>:</span>
                 <span>ADG = <strong>{adgPreview.adg}g/day</strong></span>
               </div>
             </div>

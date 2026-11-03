@@ -163,7 +163,7 @@ const HealthView = ({ onOpenAddModal }) => {
                               }}
                               onClick={() => toggleHealthStatus(h.id)}
                             >
-                              {isCompleted ? '✓ Done' : 'Mark Done'}
+                              {isCompleted ? 'Done' : 'Mark Done'}
                             </button>
                           </td>
                           <td style={{ textAlign: 'right' }}>

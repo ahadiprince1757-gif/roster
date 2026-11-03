@@ -14,8 +14,8 @@ import { Calculator, TrendingUp, Target, Info, ChevronDown, ChevronUp } from 'lu
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const STATUS_LABELS = {
-  excellent: { label: 'On Target ✓', cls: 'ps-status--excellent' },
-  good:      { label: 'Acceptable',  cls: 'ps-status--good' },
+  excellent: { label: 'On Target',    cls: 'ps-status--excellent' },
+  good:      { label: 'Acceptable',   cls: 'ps-status--good' },
   warning:   { label: 'Watch',       cls: 'ps-status--warning' },
   poor:      { label: 'Below Target',cls: 'ps-status--poor' },
   unknown:   { label: '—',           cls: 'ps-status--unknown' },

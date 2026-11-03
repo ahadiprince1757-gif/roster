@@ -292,34 +292,34 @@ export const VACCINATION_GUIDE = [
 
 export const METHOD_GLOSSARY = {
   sc: {
-    label: 'Subcutaneous Injection (SC)',
-    icon: '💉',
-    plain: 'An injection just under the skin — usually in the loose skin of the neck or thigh. Needs a trained person to administer correctly.',
+    label: 'SC (Under the skin)',
+    icon: 'sc',
+    plain: 'A small injection is given just beneath the chicken\'s skin — not into the muscle. Usually done in the loose skin on the back of the neck or the thigh. A trained farm attendant or vet should do this.',
   },
   drinking_water: {
-    label: 'Drinking Water',
-    icon: '💧',
-    plain: 'The vaccine is mixed into the chickens\' drinking water. Withhold water 1–2 hours before so birds are thirsty and drink quickly. Use only clean, chlorine-free water.',
+    label: 'Drinking Water (Mixed in water)',
+    icon: 'drinking_water',
+    plain: 'The vaccine is dissolved in the chickens\' drinking water. Remove water 1–2 hours first so the birds are thirsty and will drink quickly. Always use clean water with no chlorine or disinfectant — these kill the vaccine.',
   },
   coarse_spray: {
-    label: 'Coarse Spray',
-    icon: '🌫️',
-    plain: 'A special sprayer distributes large vaccine droplets over the birds from above. Birds breathe in and absorb the vaccine. Used for respiratory vaccines.',
+    label: 'Coarse Spray (Spray over birds)',
+    icon: 'coarse_spray',
+    plain: 'A special pump sprayer is used to mist large droplets of vaccine over the birds from above. The chickens breathe in the droplets. Keep the house closed during spraying so the vaccine stays in the air.',
   },
   wing_web: {
-    label: 'Wing Web (Stab Method)',
-    icon: '🪶',
-    plain: 'A small two-pronged needle is dipped in the vaccine and used to stab through the loose thin skin under the wing. A small scab forms at the site within 7–10 days, showing the vaccine worked.',
+    label: 'Wing Web (Stab under the wing)',
+    icon: 'wing_web',
+    plain: 'A small two-pronged needle is dipped in the vaccine liquid and then pressed through the loose, thin skin found under the wing — like a thin flap of skin. Within 7–10 days a small scab forms at that spot. If you see the scab, the vaccination worked.',
   },
   intraocular: {
-    label: 'Eye Drop (Intraocular)',
-    icon: '👁️',
-    plain: 'A single drop of vaccine is placed directly into one eye of each bird using a dropper. Hold the bird gently and wait for it to blink before releasing.',
+    label: 'Intraocular (Eye drop)',
+    icon: 'intraocular',
+    plain: 'One single drop of vaccine is placed directly into the chicken\'s eye using a small dropper. Hold the bird still and wait for it to blink before you let it go. The eye absorbs the vaccine quickly.',
   },
   parenteral: {
-    label: 'Injection (Parenteral)',
-    icon: '💉',
-    plain: 'A vaccine given by injection — either under the skin (SC) or into the muscle (IM). Must be given by a trained person using the correct needle size.',
+    label: 'Parenteral (Injection)',
+    icon: 'parenteral',
+    plain: 'The vaccine is given by injection — either just under the skin (SC) or deeper into the muscle (IM). Always use the correct needle size for the bird\'s age and follow the dosage on the vaccine label.',
   },
 };
 
@@ -328,19 +328,19 @@ export const METHOD_GLOSSARY = {
 export const FLOCK_TYPES = {
   broiler: {
     label: 'Broiler (Commercial)',
-    icon: '🐔',
+    icon: 'broiler',
     description: 'Fast-growing chickens raised for meat, sold at 5–7 weeks. Only core vaccines are needed.',
     colour: 'var(--primary)',
   },
   layer: {
     label: 'Layer (Egg Production)',
-    icon: '🥚',
+    icon: 'layer',
     description: 'Hens raised to produce eggs for 12–18 months. Require a full extended vaccination programme.',
     colour: '#f59e0b',
   },
   indigenous: {
     label: 'Indigenous / Local Breed',
-    icon: '🐓',
+    icon: 'indigenous',
     description: 'Local or traditional breeds kept for eggs and meat over longer periods. Use a simplified layer programme.',
     colour: '#22c55e',
   },

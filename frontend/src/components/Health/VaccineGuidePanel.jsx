@@ -5,7 +5,51 @@ import {
   FLOCK_TYPES,
   getGuideForType,
 } from '../../data/vaccinationGuide';
-import { Shield, Info, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import {
+  Shield,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  BookOpen,
+  Syringe,
+  Droplets,
+  Wind,
+  Feather,
+  Eye,
+  Bird,
+  Egg,
+} from 'lucide-react';
+
+// ── Icon helpers ─────────────────────────────────────────────────────────────
+
+function getMethodIcon(key, size = 13) {
+  switch (key) {
+    case 'sc':
+    case 'parenteral':
+      return <Syringe size={size} />;
+    case 'drinking_water':
+      return <Droplets size={size} />;
+    case 'coarse_spray':
+      return <Wind size={size} />;
+    case 'wing_web':
+      return <Feather size={size} />;
+    case 'intraocular':
+      return <Eye size={size} />;
+    default:
+      return null;
+  }
+}
+
+function getFlockIcon(key, size = 16) {
+  switch (key) {
+    case 'layer':
+      return <Egg size={size} />;
+    case 'broiler':
+    case 'indigenous':
+    default:
+      return <Bird size={size} />;
+  }
+}
 
 // ── Method badge with tap-to-explain ─────────────────────────────────────────
 
@@ -21,7 +65,10 @@ function MethodBadge({ methodKey }) {
         onClick={() => setOpen((v) => !v)}
         title="Tap to learn what this means"
       >
-        {info.icon} {info.label}
+        <span className="vg-badge-icon" style={{ display: 'inline-flex', verticalAlign: 'middle', marginRight: 4 }}>
+          {getMethodIcon(methodKey)}
+        </span>
+        {info.label}
         <ChevronDown size={11} className={`vg-method-chevron ${open ? 'open' : ''}`} />
       </button>
       {open && (
@@ -53,7 +100,7 @@ function FlockTypeSelector({ selected, onChange }) {
           className={`vg-type-btn ${selected === key ? 'active' : ''}`}
           onClick={() => onChange(key)}
         >
-          <span className="vg-type-icon">{def.icon}</span>
+          <span className="vg-type-icon">{getFlockIcon(key, 16)}</span>
           <span className="vg-type-label">{def.label}</span>
         </button>
       ))}
@@ -92,7 +139,12 @@ function VaccineRow({ entry }) {
               <div className="vg-detail-text">{entry.methodNote}</div>
               {entry.method && METHOD_GLOSSARY[entry.method] && (
                 <div className="vg-detail-method-explain">
-                  <strong>{METHOD_GLOSSARY[entry.method].icon} {METHOD_GLOSSARY[entry.method].label}:</strong>{' '}
+                  <strong>
+                    <span style={{ display: 'inline-flex', verticalAlign: 'middle', marginRight: 4 }}>
+                      {getMethodIcon(entry.method, 14)}
+                    </span>
+                    {METHOD_GLOSSARY[entry.method].label}:
+                  </strong>{' '}
                   {METHOD_GLOSSARY[entry.method].plain}
                 </div>
               )}
@@ -150,7 +202,7 @@ const VaccineGuidePanel = () => {
         </div>
         <FlockTypeSelector selected={flockType} onChange={setFlockType} />
         <div className="vg-type-desc">
-          <span>{def.icon}</span>
+          <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>{getFlockIcon(flockType, 16)}</span>
           <span>{def.description}</span>
         </div>
       </div>
@@ -159,7 +211,7 @@ const VaccineGuidePanel = () => {
       <div className="vg-panel">
         <div className="vg-panel-head">
           <div>
-            <h3>{def.icon} {def.label} — Vaccination Programme</h3>
+            <h3>{def.label} — Vaccination Programme</h3>
             <small>{entries.length} vaccine entries · Tap any row to see instructions</small>
           </div>
           <button
@@ -199,7 +251,9 @@ const VaccineGuidePanel = () => {
         <div className="vg-glossary-grid">
           {Object.entries(METHOD_GLOSSARY).map(([key, item]) => (
             <div key={key} className="vg-glossary-card">
-              <div className="vg-glossary-icon">{item.icon}</div>
+              <div className="vg-glossary-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {getMethodIcon(key, 20)}
+              </div>
               <div className="vg-glossary-label">{item.label}</div>
               <div className="vg-glossary-plain">{item.plain}</div>
             </div>

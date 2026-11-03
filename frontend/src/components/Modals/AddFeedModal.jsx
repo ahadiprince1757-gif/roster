@@ -56,10 +56,10 @@ const AddFeedModal = ({ isOpen, onClose }) => {
     const qty = autoQtyKg ?? Number(formData.qty);
     if (!qty || metrics.feedStockRemainingKg <= 0) return null;
     if (qty > metrics.feedStockRemainingKg) {
-      return `⚠️ Exceeds recorded stock by ${(qty - metrics.feedStockRemainingKg).toFixed(0)}kg`;
+      return `Exceeds recorded stock by ${(qty - metrics.feedStockRemainingKg).toFixed(0)}kg`;
     }
     const remaining = metrics.feedStockRemainingKg - qty;
-    return `✅ ${remaining.toFixed(0)}kg remaining after this entry`;
+    return `${remaining.toFixed(0)}kg remaining after this entry`;
   }, [formData.type, formData.qty, autoQtyKg, metrics.feedStockRemainingKg]);
 
   const handleSubmit = (e) => {
@@ -191,7 +191,7 @@ const AddFeedModal = ({ isOpen, onClose }) => {
               {autoQtyKg && (
                 <div className="field full-width">
                   <div className="calc-insight">
-                    <span>📦 Auto-calculated total:</span>
+                    <span>Auto-calculated total:</span>
                     <span><strong>{autoQtyKg} kg</strong></span>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ const AddFeedModal = ({ isOpen, onClose }) => {
                 {autoCost && (
                   <div className="field full-width">
                     <div className="calc-insight">
-                      <span>💰 Total cost:</span>
+                      <span>Total cost:</span>
                       <span><strong>{currency} {autoCost.toLocaleString()}</strong></span>
                     </div>
                   </div>
@@ -242,10 +242,10 @@ const AddFeedModal = ({ isOpen, onClose }) => {
             <div className="field full-width">
               <div className="auto-calc-preview">
                 {feedPerBirdInsight && (
-                  <span>🐔 <strong>{feedPerBirdInsight}g</strong>/bird/day</span>
+                  <span><strong>{feedPerBirdInsight}g</strong>/bird/day</span>
                 )}
                 {costPerKgInsight && (
-                  <span>💵 <strong>{currency} {costPerKgInsight}</strong>/kg</span>
+                  <span><strong>{currency} {costPerKgInsight}</strong>/kg</span>
                 )}
                 {stockWarning && (
                   <span style={{ width: '100%' }}>{stockWarning}</span>

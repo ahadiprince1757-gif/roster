@@ -81,7 +81,7 @@ const BatchView = ({ onOpenReport }) => {
             </div>
             {savedSuccess && (
               <span style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600 }}>
-                Saved ✓
+                Saved
               </span>
             )}
           </div>

@@ -168,7 +168,7 @@ const AddExpenseModal = ({ isOpen, onClose }) => {
               {autoTotal && (
                 <div className="field full-width">
                   <div className="calc-insight">
-                    <span>🧮 Auto-calculated total:</span>
+                    <span>Auto-calculated total:</span>
                     <span><strong>{currency} {autoTotal.toLocaleString()}</strong></span>
                   </div>
                 </div>
@@ -181,10 +181,10 @@ const AddExpenseModal = ({ isOpen, onClose }) => {
             <div className="field full-width">
               <div className="auto-calc-preview">
                 {costPerBirdInsight && (
-                  <span>🐔 <strong>{currency} {costPerBirdInsight}</strong>/bird (this expense)</span>
+                  <span><strong>{currency} {costPerBirdInsight}</strong>/bird (this expense)</span>
                 )}
                 {newTotalExpenses && (
-                  <span>📊 Running total → <strong>{currency} {newTotalExpenses.toLocaleString()}</strong></span>
+                  <span>Running total: <strong>{currency} {newTotalExpenses.toLocaleString()}</strong></span>
                 )}
               </div>
             </div>

@@ -1,17 +1,17 @@
-# 🐔 Rosestar — Broiler Farm Management App
+# Rosestar — Broiler Farm Management App
 
 A clean, minimalist **React** web app for managing broiler poultry farms, inspired by Apple's design philosophy. Built with Vite + React.
 
 ## Features
 
-- 📊 **Dashboard** — Live KPIs: FCR, ADG, EPEF, mortality rate
-- ⚖️ **Weight Tracking** — Log and chart bird weights vs. breed benchmarks (Cobb 500 / Ross 308)
-- 🌾 **Feed Management** — Track daily feed consumption and conversion
-- 💊 **Health & Vaccination** — Log treatments, vaccinations, and health events
-- 💀 **Mortality Tracking** — Record and visualize daily deaths
-- 💰 **Finance** — Track expenses, sales, and profitability
-- 📋 **Batch Reports** — Generate end-of-cycle performance reports
-- 📱 **Mobile-first** — Responsive design with iOS-style bottom navigation
+- **Dashboard** — Live KPIs: FCR, ADG, EPEF, mortality rate
+- **Weight Tracking** — Log and chart bird weights vs. breed benchmarks (Cobb 500 / Ross 308)
+- **Feed Management** — Track daily feed consumption and conversion
+- **Health & Vaccination** — Log treatments, vaccinations, and health events
+- **Mortality Tracking** — Record and visualize daily deaths
+- **Finance** — Track expenses, sales, and profitability
+- **Batch Reports** — Generate end-of-cycle performance reports
+- **Mobile-first** — Responsive design with iOS-style bottom navigation
 
 ## Tech Stack
 

@@ -9,45 +9,53 @@
 
 -- ── Flock Type Definitions ────────────────────────────────────────────────────
 INSERT INTO flock_type_defs (id, label, icon, description, colour) VALUES
-  ('broiler',    'Broiler (Commercial)',   '🐔', 'Fast-growing chickens raised for meat, sold at 5–7 weeks. Only core vaccines are needed.', '#6366f1'),
-  ('layer',      'Layer (Egg Production)', '🥚', 'Hens raised to produce eggs for 12–18 months. Require a full extended vaccination programme.', '#f59e0b'),
-  ('indigenous', 'Indigenous / Local Breed','🐓', 'Local or traditional breeds kept for eggs and meat over longer periods. Use a simplified layer programme.', '#22c55e')
-ON CONFLICT (id) DO NOTHING;
+  ('broiler',    'Broiler (Commercial)',   'broiler', 'Fast-growing chickens raised for meat, sold at 5–7 weeks. Only core vaccines are needed.', '#6366f1'),
+  ('layer',      'Layer (Egg Production)', 'layer', 'Hens raised to produce eggs for 12–18 months. Require a full extended vaccination programme.', '#f59e0b'),
+  ('indigenous', 'Indigenous / Local Breed','indigenous', 'Local or traditional breeds kept for eggs and meat over longer periods. Use a simplified layer programme.', '#22c55e')
+ON CONFLICT (id) DO UPDATE
+  SET label       = EXCLUDED.label,
+      icon        = EXCLUDED.icon,
+      description = EXCLUDED.description,
+      colour      = EXCLUDED.colour;
 
 
 -- ── Method Glossary ───────────────────────────────────────────────────────────
 INSERT INTO method_glossary (id, label, icon, plain) VALUES
   ('sc',
-   'Subcutaneous Injection (SC)',
-   '💉',
-   'An injection just under the skin — usually in the loose skin of the neck or thigh. Needs a trained person to administer correctly.'),
+   'SC (Under the skin)',
+   'sc',
+   'A small injection is given just beneath the chicken''s skin — not into the muscle. Usually done in the loose skin on the back of the neck or the thigh. A trained farm attendant or vet should do this.'),
 
   ('drinking_water',
-   'Drinking Water',
-   '💧',
-   'The vaccine is mixed into the chickens'' drinking water. Withhold water 1–2 hours before so birds are thirsty and drink quickly. Use only clean, chlorine-free water.'),
+   'Drinking Water (Mixed in water)',
+   'drinking_water',
+   'The vaccine is dissolved in the chickens'' drinking water. Remove water 1–2 hours first so the birds are thirsty and will drink quickly. Always use clean water with no chlorine or disinfectant — these kill the vaccine.'),
 
   ('coarse_spray',
-   'Coarse Spray',
-   '🌫️',
-   'A special sprayer distributes large vaccine droplets over the birds from above. Birds breathe in and absorb the vaccine. Used for respiratory vaccines.'),
+   'Coarse Spray (Spray over birds)',
+   'coarse_spray',
+   'A special pump sprayer is used to mist large droplets of vaccine over the birds from above. The chickens breathe in the droplets. Keep the house closed during spraying so the vaccine stays in the air.'),
 
   ('wing_web',
-   'Wing Web (Stab Method)',
-   '🪶',
-   'A small two-pronged needle is dipped in the vaccine and used to stab through the loose thin skin under the wing. A small scab forms at the site within 7–10 days, showing the vaccine worked.'),
+   'Wing Web (Stab under the wing)',
+   'wing_web',
+   'A small two-pronged needle is dipped in the vaccine liquid and then pressed through the loose, thin skin found under the wing — like a thin flap of skin. Within 7–10 days a small scab forms at that spot. If you see the scab, the vaccination worked.'),
 
   ('intraocular',
-   'Eye Drop (Intraocular)',
-   '👁️',
-   'A single drop of vaccine is placed directly into one eye of each bird using a dropper. Hold the bird gently and wait for it to blink before releasing.'),
+   'Intraocular (Eye drop)',
+   'intraocular',
+   'One single drop of vaccine is placed directly into the chicken''s eye using a small dropper. Hold the bird still and wait for it to blink before you let it go. The eye absorbs the vaccine quickly.'),
 
   ('parenteral',
-   'Injection (Parenteral)',
-   '💉',
-   'A vaccine given by injection — either under the skin (SC) or into the muscle (IM). Must be given by a trained person using the correct needle size.')
+   'Parenteral (Injection)',
+   'parenteral',
+   'The vaccine is given by injection — either just under the skin (SC) or deeper into the muscle (IM). Always use the correct needle size for the bird''s age and follow the dosage on the vaccine label.')
 
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE
+  SET label = EXCLUDED.label,
+      icon  = EXCLUDED.icon,
+      plain = EXCLUDED.plain;
+
 
 
 -- ── Vaccine Guide Entries ─────────────────────────────────────────────────────
