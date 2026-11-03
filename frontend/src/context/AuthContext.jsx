@@ -88,9 +88,9 @@ export const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     setAuthError(null);
     if (!isSupabaseConfigured || !supabase) {
-      throw new Error(
-        'Supabase is not configured yet. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your frontend/.env file.'
-      );
+      const msg = 'Supabase keys missing. Please paste your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY into frontend/.env (see guide below).';
+      setAuthError(msg);
+      throw new Error(msg);
     }
 
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -115,9 +115,9 @@ export const AuthProvider = ({ children }) => {
   const signInWithEmail = async (email, password) => {
     setAuthError(null);
     if (!isSupabaseConfigured || !supabase) {
-      throw new Error(
-        'Supabase is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to frontend/.env.'
-      );
+      const msg = 'Supabase keys missing. Please paste your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY into frontend/.env.';
+      setAuthError(msg);
+      throw new Error(msg);
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -139,9 +139,9 @@ export const AuthProvider = ({ children }) => {
   const signUpWithEmail = async (email, password, fullName) => {
     setAuthError(null);
     if (!isSupabaseConfigured || !supabase) {
-      throw new Error(
-        'Supabase is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to frontend/.env.'
-      );
+      const msg = 'Supabase keys missing. Please paste your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY into frontend/.env.';
+      setAuthError(msg);
+      throw new Error(msg);
     }
 
     const { data, error } = await supabase.auth.signUp({
