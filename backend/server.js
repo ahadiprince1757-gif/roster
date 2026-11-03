@@ -47,6 +47,7 @@ app.use('/api/feeds',         require('./routes/feeds'));
 app.use('/api/health-events', require('./routes/healthEvents'));
 app.use('/api/deaths',        require('./routes/deaths'));
 app.use('/api/finances',      require('./routes/finances'));
+app.use('/api/vaccine-guide', require('./routes/vaccineGuide'));
 
 // ── Health Check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
