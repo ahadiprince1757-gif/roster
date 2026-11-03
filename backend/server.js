@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const supabase = require('./supabase');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,6 +14,7 @@ app.use(helmet());
 // Allow requests from frontend origins
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5174',
   'http://localhost:4173',
   process.env.CLIENT_ORIGIN,
 ].filter(Boolean);
@@ -40,6 +42,27 @@ app.use(rateLimit({
 
 app.use(express.json({ limit: '1mb' }));
 
+// ── Health Check ──────────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    app: 'Rosestar Farm API',
+    supabaseConnected: Boolean(supabase),
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+  });
+});
+
+// Guard data routes if Supabase credentials are not configured yet
+app.use('/api', (req, res, next) => {
+  if (!supabase) {
+    return res.status(503).json({
+      error: 'Backend Supabase credentials missing. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY in backend/.env',
+    });
+  }
+  next();
+});
+
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/batches',       require('./routes/batches'));
 app.use('/api/weights',       require('./routes/weights'));
@@ -48,16 +71,6 @@ app.use('/api/health-events', require('./routes/healthEvents'));
 app.use('/api/deaths',        require('./routes/deaths'));
 app.use('/api/finances',      require('./routes/finances'));
 app.use('/api/vaccine-guide', require('./routes/vaccineGuide'));
-
-// ── Health Check ──────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    app: 'Rosestar Farm API',
-    timestamp: new Date().toISOString(),
-    version: '1.0.0',
-  });
-});
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((req, res) => {
