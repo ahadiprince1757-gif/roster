@@ -11,9 +11,20 @@
 
 import { supabase } from './supabaseClient';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const isLocalhost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '0.0.0.0');
+
+const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (isLocalhost ? 'http://localhost:3001' : '');
 
 async function api(path, options = {}) {
+  if (!BASE_URL) {
+    return null;
+  }
   try {
     const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
 
