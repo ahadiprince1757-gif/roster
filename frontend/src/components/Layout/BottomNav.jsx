@@ -12,7 +12,9 @@ import {
   FileText,
   Home,
   User,
-  X
+  X,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 const MAIN_NAV = [
@@ -31,7 +33,7 @@ const MORE_NAV = [
 ];
 
 const BottomNav = ({ onOpenReport }) => {
-  const { activeTab, setActiveTab } = useFarm();
+  const { activeTab, setActiveTab, theme, toggleTheme, currency, setCurrency } = useFarm();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
 
   const handleTabClick = (id) => {
@@ -94,6 +96,64 @@ const BottomNav = ({ onOpenReport }) => {
             >
               <X size={18} />
             </button>
+          </div>
+
+          {/* Quick Settings: Theme & Currency */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--bg-subtle)',
+              border: '1px solid var(--border-hairline)',
+              marginBottom: '10px',
+            }}
+          >
+            <button
+              onClick={toggleTheme}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-primary)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 600 }}>CURRENCY</span>
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                style={{
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-hairline)',
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer',
+                  outline: 'none',
+                }}
+              >
+                <option value="KSh">KSh (Kenya)</option>
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+                <option value="₦">NGN (₦)</option>
+                <option value="R">ZAR (R)</option>
+              </select>
+            </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>

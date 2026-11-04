@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFarm } from '../../context/FarmContext';
 import { useAuth } from '../../context/AuthContext';
-import { Sun, Moon, Plus, LogIn, User } from 'lucide-react';
+import { Sun, Moon, Plus, LogIn } from 'lucide-react';
 import UserProfileModal from '../Auth/UserProfileModal';
 
 const TABS = [
@@ -25,39 +25,50 @@ const MinimalNav = ({ onOpenQuickLog, onOpenReport }) => {
 
   return (
     <>
-      <nav className="min-nav">
-        {/* Top Row: Brand on left, Controls on right */}
-        <div className="min-nav-top">
-          <div className="min-brand" onClick={() => setActiveTab('landing')}>
-            <img
-              src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
-              alt="Rosestar Logo"
-            />
-            <span>Rosestar</span>
-          </div>
+      <header className="min-nav">
+        {/* Brand */}
+        <div className="min-brand" onClick={() => setActiveTab('landing')} title="Go to home">
+          <img
+            src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
+            alt="Rosestar Logo"
+          />
+          <span className="min-brand-title">Rosestar</span>
+        </div>
 
-          <div className="min-controls">
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              style={{
-                fontSize: '0.8rem',
-                color: 'var(--text-secondary)',
-                fontWeight: 600,
-                cursor: 'pointer',
-                padding: '4px 6px',
-                outline: 'none',
-                background: 'transparent',
-              }}
-              title="Currency"
-            >
-              <option value="KSh">KSh</option>
-              <option value="$">USD ($)</option>
-              <option value="€">EUR (€)</option>
-              <option value="£">GBP (£)</option>
-              <option value="₦">NGN (₦)</option>
-              <option value="R">ZAR (R)</option>
-            </select>
+        {/* Center: Apple-style Segmented Navigation (Desktop) */}
+        <div className="min-segmented-scroll">
+          <div className="min-segmented">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                className={`min-seg-item ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Controls */}
+        <div className="min-controls">
+          {/* Desktop-only secondary controls (Theme & Currency) */}
+          <div className="min-desktop-controls">
+            <div className="min-currency-pill">
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="min-currency-select"
+                title="Currency"
+              >
+                <option value="KSh">KSh</option>
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+                <option value="₦">NGN (₦)</option>
+                <option value="R">ZAR (R)</option>
+              </select>
+            </div>
 
             <button
               className="min-btn-icon"
@@ -66,103 +77,46 @@ const MinimalNav = ({ onOpenQuickLog, onOpenReport }) => {
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
-
-            {/* User Profile or Sign In Button */}
-            {user ? (
-              <button
-                className="min-btn-icon"
-                onClick={() => setProfileOpen(true)}
-                title={`Signed in as ${userName} (${user.email})`}
-                style={{
-                  position: 'relative',
-                  padding: '2px',
-                  borderRadius: '50%',
-                  border: '1.5px solid var(--border-hairline)',
-                }}
-              >
-                {userAvatar ? (
-                  <img
-                    src={userAvatar}
-                    alt={userName}
-                    style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <span
-                    style={{
-                      width: '22px',
-                      height: '22px',
-                      borderRadius: '50%',
-                      background: 'var(--accent-subtle)',
-                      color: 'var(--accent)',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {userName[0].toUpperCase()}
-                  </span>
-                )}
-                {/* Active status indicator dot */}
-                <span
-                  style={{
-                    position: 'absolute',
-                    bottom: '0',
-                    right: '0',
-                    width: '7px',
-                    height: '7px',
-                    borderRadius: '50%',
-                    background: '#22c55e',
-                    border: '1.5px solid var(--bg-surface)',
-                  }}
-                />
-              </button>
-            ) : (
-              <button
-                onClick={() => setActiveTab('login')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  fontSize: '0.78rem',
-                  fontWeight: 600,
-                  padding: '5px 10px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-hairline)',
-                  background: 'var(--bg-subtle)',
-                  color: 'var(--text-primary)',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <LogIn size={13} />
-                <span>Sign In</span>
-              </button>
-            )}
-
-            <button className="min-pill-btn" onClick={onOpenQuickLog}>
-              <Plus size={13} />
-              <span>Log</span>
-            </button>
           </div>
-        </div>
 
-      {/* Horizontally scrollable segmented bar on mobile */}
-      <div className="min-segmented-scroll">
-        <div className="min-segmented">
-          {TABS.map((tab) => (
+          {/* Quick Action: Log Button */}
+          <button className="min-pill-btn" onClick={onOpenQuickLog} title="Quick log entry">
+            <Plus size={14} />
+            <span>Log</span>
+          </button>
+
+          {/* User Profile or Sign In */}
+          {user ? (
             <button
-              key={tab.id}
-              className={`min-seg-item ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
+              className="min-avatar-btn"
+              onClick={() => setProfileOpen(true)}
+              title={`Farmer: ${userName} (${user.email || 'active'})`}
             >
-              {tab.label}
+              {userAvatar ? (
+                <img
+                  src={userAvatar}
+                  alt={userName}
+                  className="min-avatar-img"
+                />
+              ) : (
+                <span className="min-avatar-initial">
+                  {userName[0].toUpperCase()}
+                </span>
+              )}
+              <span className="min-status-dot" />
             </button>
-          ))}
+          ) : (
+            <button
+              className="min-signin-btn"
+              onClick={() => setActiveTab('login')}
+              title="Sign in with Google"
+            >
+              <LogIn size={13} />
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
-      </div>
-      </nav>
+      </header>
 
       {/* User Profile Popover Modal */}
       <UserProfileModal

@@ -9,6 +9,8 @@ import {
   Layers,
   Sparkles,
   ExternalLink,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 const GoogleIcon = ({ size = 16 }) => (
@@ -34,7 +36,7 @@ const GoogleIcon = ({ size = 16 }) => (
 
 const UserProfileModal = ({ isOpen, onClose, onOpenLogin }) => {
   const { user, signOut } = useAuth();
-  const { farmData } = useFarm();
+  const { farmData, theme, toggleTheme, currency, setCurrency } = useFarm();
 
   if (!isOpen) return null;
 
@@ -179,6 +181,63 @@ const UserProfileModal = ({ isOpen, onClose, onOpenLogin }) => {
                   <strong style={{ color: 'var(--text-primary)' }}>
                     {farmData?.batch?.birds ? `${farmData.batch.birds.toLocaleString()} birds` : '0 birds'}
                   </strong>
+                </div>
+              </div>
+
+              {/* Preferences: Theme & Currency */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 14px',
+                  background: 'var(--bg-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  border: '1px solid var(--border-hairline)',
+                }}
+              >
+                <button
+                  onClick={toggleTheme}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                  <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                </button>
+
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 600 }}>CURRENCY</span>
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    style={{
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border-hairline)',
+                      borderRadius: '6px',
+                      padding: '4px 8px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      cursor: 'pointer',
+                      outline: 'none',
+                    }}
+                  >
+                    <option value="KSh">KSh</option>
+                    <option value="$">USD ($)</option>
+                    <option value="€">EUR (€)</option>
+                    <option value="£">GBP (£)</option>
+                    <option value="₦">NGN (₦)</option>
+                    <option value="R">ZAR (R)</option>
+                  </select>
                 </div>
               </div>
 
