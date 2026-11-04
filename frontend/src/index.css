@@ -1,58 +1,87 @@
 /* ==========================================================================
-   BroilerOS — Minimalist Design System (Steve Jobs / Apple Inspired)
+   Rosestar — Deep Forest · Emerald · Muted Gold · Warm Ivory Design System
+   Personality: Natural, Established, Trustworthy & Premium
    Optimized for Mobile, Tablet & Desktop Viewports
    ========================================================================== */
 
 :root {
-  /* Light Theme - Clean, quiet, expansive whitespace */
-  --bg-app: #fafafa;
-  --bg-surface: #ffffff;
-  --bg-subtle: #f5f5f7;
-  --bg-hover: #ebebee;
-  --border-hairline: #e5e5ea;
-  --border-focus: #000000;
+  /* ── Light Theme ── Warm Ivory + Deep Forest ── */
+  --bg-app:        #F4F0E6;   /* Warm Ivory — main canvas */
+  --bg-surface:    #FDFAF4;   /* Off-white — cards / sheets */
+  --bg-subtle:     #EDE8D8;   /* Muted ivory — subtle fills */
+  --bg-hover:      #E4DEC9;   /* Hover state */
+  --border-hairline: #D6CFBA; /* Warm hairline border */
+  --border-focus:  #2C3B2D;   /* Deep forest focus ring */
 
-  --text-primary: #1d1d1f;
-  --text-secondary: #6e6e73;
-  --text-tertiary: #86868b;
+  --text-primary:  #2C3B2D;   /* Deep Forest — headings / body */
+  --text-secondary:#5C6B52;   /* Mid forest green-grey */
+  --text-tertiary: #8A9A7E;   /* Muted sage — placeholders */
 
-  --accent: #15803d;
-  --accent-subtle: #f0fdf4;
-  --accent-text: #166534;
+  /* Primary accent — Emerald */
+  --accent:        #4A7C59;
+  --accent-subtle: rgba(74, 124, 89, 0.10);
+  --accent-text:   #2E5E3A;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Plus Jakarta Sans", system-ui, sans-serif;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  /* Gold accent — highlights / badges */
+  --gold:          #C4A96B;
+  --gold-subtle:   rgba(196, 169, 107, 0.15);
+  --gold-text:     #8A6D30;
+
+  /* Semantic colours */
+  --accent-red:    #B85450;
+  --accent-amber:  #C4A96B;
+  --accent-amber-light: rgba(196, 169, 107, 0.15);
+  --accent-blue:   #3A6B7C;
+  --accent-purple: #6B5A7C;
+  --primary:       #4A7C59;
+
+  --font-sans: "Plus Jakarta Sans", "Outfit", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
   --radius-full: 9999px;
 
-  /* Responsive Container Constraints */
+  /* Responsive Container */
   --container-max-width: 1200px;
   --container-padding: 24px;
 
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-float: 0 12px 36px rgba(0, 0, 0, 0.08);
+  --shadow-subtle: 0 1px 4px rgba(44, 59, 45, 0.06);
+  --shadow-float:  0 12px 36px rgba(44, 59, 45, 0.12);
 }
 
 [data-theme='dark'] {
-  /* Dark Theme - OLED Obsidian, crisp contrast, minimal glow */
-  --bg-app: #000000;
-  --bg-surface: #121214;
-  --bg-subtle: #1c1c1e;
-  --bg-hover: #2c2c2e;
-  --border-hairline: #27272a;
-  --border-focus: #ffffff;
+  /* ── Dark Theme ── Rich Dark Forest ── */
+  --bg-app:        #161D16;   /* Deepest forest night */
+  --bg-surface:    #1E2A1F;   /* Dark forest card */
+  --bg-subtle:     #263028;   /* Subtle forest fill */
+  --bg-hover:      #2E3A30;   /* Hover state */
+  --border-hairline: #354038; /* Dark forest border */
+  --border-focus:  #C4A96B;   /* Gold focus ring */
 
-  --text-primary: #f5f5f7;
-  --text-secondary: #a1a1a6;
-  --text-tertiary: #636366;
+  --text-primary:  #F4F0E6;   /* Warm ivory text */
+  --text-secondary:#A8B89E;   /* Sage mid-tone */
+  --text-tertiary: #667560;   /* Muted forest sage */
 
-  --accent: #22c55e;
-  --accent-subtle: rgba(34, 197, 94, 0.12);
-  --accent-text: #4ade80;
+  /* Primary accent — Brighter Emerald for dark */
+  --accent:        #6AAF80;
+  --accent-subtle: rgba(106, 175, 128, 0.14);
+  --accent-text:   #90C9A5;
 
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-float: 0 12px 36px rgba(0, 0, 0, 0.6);
+  /* Gold accent */
+  --gold:          #D4B97B;
+  --gold-subtle:   rgba(212, 185, 123, 0.15);
+  --gold-text:     #D4B97B;
+
+  /* Semantic colours */
+  --accent-red:    #E07C79;
+  --accent-amber:  #D4B97B;
+  --accent-amber-light: rgba(212, 185, 123, 0.15);
+  --accent-blue:   #6AAFC4;
+  --accent-purple: #A08AC4;
+  --primary:       #6AAF80;
+
+  --shadow-subtle: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-float:  0 12px 36px rgba(0, 0, 0, 0.6);
 }
 
 *, *::before, *::after {
@@ -107,7 +136,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(244, 240, 230, 0.90);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--border-hairline);
@@ -120,7 +149,7 @@ button {
 }
 
 [data-theme='dark'] .min-nav {
-  background: rgba(18, 18, 20, 0.88);
+  background: rgba(22, 29, 22, 0.92);
 }
 
 .min-nav-inner {
@@ -718,19 +747,31 @@ button {
 }
 
 .apple-btn-main {
-  background: var(--text-primary);
-  color: var(--bg-app);
+  background: #2C3B2D;
+  color: #F4F0E6;
   padding: 12px 28px;
   border-radius: var(--radius-full);
   font-size: 0.95rem;
   font-weight: 600;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(44, 59, 45, 0.25);
 }
 
 .apple-btn-main:hover {
   transform: scale(1.02);
-  opacity: 0.92;
+  background: #3A4E3C;
+  box-shadow: 0 4px 16px rgba(44, 59, 45, 0.35);
+}
+
+[data-theme='dark'] .apple-btn-main {
+  background: #4A7C59;
+  color: #F4F0E6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] .apple-btn-main:hover {
+  background: #5A9068;
 }
 
 .apple-btn-sub {
@@ -740,13 +781,14 @@ button {
   border-radius: var(--radius-full);
   font-size: 0.95rem;
   font-weight: 500;
-  border: 1px solid var(--border-hairline);
+  border: 1.5px solid var(--border-hairline);
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .apple-btn-sub:hover {
   background: var(--bg-subtle);
+  border-color: var(--text-tertiary);
 }
 
 .apple-pillars {
