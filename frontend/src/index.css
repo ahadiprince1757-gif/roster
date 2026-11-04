@@ -26,6 +26,10 @@
   --radius-lg: 20px;
   --radius-full: 9999px;
 
+  /* Responsive Container Constraints */
+  --container-max-width: 1200px;
+  --container-padding: 24px;
+
   --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
   --shadow-float: 0 12px 36px rgba(0, 0, 0, 0.08);
 }
@@ -91,8 +95,11 @@ button {
 /* Minimalist App Shell */
 .min-app {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* Minimalist Top Navigation Bar */
@@ -104,16 +111,26 @@ button {
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--border-hairline);
-  padding: 0 32px;
+  padding: 0 var(--container-padding);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: 56px;
+  width: 100%;
   transition: background 0.2s ease;
 }
 
 [data-theme='dark'] .min-nav {
   background: rgba(18, 18, 20, 0.88);
+}
+
+.min-nav-inner {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .min-nav-top {
@@ -338,10 +355,10 @@ button {
 
 /* Main Content Canvas */
 .min-content {
-  max-width: 1140px;
+  max-width: var(--container-max-width);
   width: 100%;
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 32px var(--container-padding) 80px;
   flex: 1;
 }
 
@@ -357,7 +374,7 @@ button {
 }
 
 .min-flock-title {
-  font-size: 1.85rem;
+  font-size: clamp(1.4rem, 3.5vw, 1.85rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
@@ -365,7 +382,7 @@ button {
 
 .min-flock-sub {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: clamp(0.82rem, 1.5vw, 0.9rem);
   margin-top: 4px;
 }
 
@@ -391,7 +408,7 @@ button {
 }
 
 .min-metric-num {
-  font-size: 2.25rem;
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
   font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1.1;
@@ -1848,5 +1865,189 @@ button {
   padding: 0 8px;
   margin: 0;
 }
+
+/* ==========================================================================
+   RESPONSIVE AUTHENTICATION / SIGN-IN SCREEN (Fits all screens)
+   ========================================================================== */
+
+.login-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app);
+  overflow-x: hidden;
+}
+
+.login-header {
+  height: 56px;
+  width: 100%;
+  padding: 0 var(--container-padding);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+[data-theme='dark'] .login-header {
+  background: rgba(18, 18, 20, 0.88);
+}
+
+.login-header-inner {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.login-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.login-back-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+
+.login-body {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 4vw, 48px) var(--container-padding) clamp(32px, 6vw, 64px);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  padding: clamp(24px, 5vw, 36px) clamp(18px, 4.5vw, 32px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-brand-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  border: 1px solid var(--border-hairline);
+}
+
+.login-title {
+  font-size: clamp(1.2rem, 3.5vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.login-subtitle {
+  font-size: clamp(0.78rem, 2vw, 0.85rem);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-oauth-btn {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  font-size: clamp(0.85rem, 2vw, 0.92rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-subtle);
+}
+
+.login-oauth-btn:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  background: var(--bg-subtle);
+  transform: translateY(-1px);
+}
+
+.login-oauth-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.login-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: clamp(0.85rem, 2vw, 0.92rem);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.login-input:focus {
+  border-color: var(--accent);
+  background: var(--bg-surface);
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    border-radius: var(--radius-md);
+    padding: 22px 18px;
+    box-shadow: none;
+  }
+
+  .login-header {
+    height: 52px;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-card {
+    padding: 18px 14px;
+  }
+
+  .login-oauth-btn {
+    padding: 10px 12px;
+    gap: 8px;
+    font-size: 0.84rem;
+  }
+}
+
 
 

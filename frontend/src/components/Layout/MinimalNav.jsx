@@ -26,8 +26,9 @@ const MinimalNav = ({ onOpenQuickLog, onOpenReport }) => {
   return (
     <>
       <header className="min-nav">
-        {/* Brand */}
-        <div className="min-brand" onClick={() => setActiveTab('landing')} title="Go to home">
+        <div className="min-nav-inner">
+          {/* Brand */}
+          <div className="min-brand" onClick={() => setActiveTab('landing')} title="Go to home">
           <img
             src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
             alt="Rosestar Logo"
@@ -116,7 +117,8 @@ const MinimalNav = ({ onOpenQuickLog, onOpenReport }) => {
             </button>
           )}
         </div>
-      </header>
+      </div>
+    </header>
 
       {/* User Profile Popover Modal */}
       <UserProfileModal

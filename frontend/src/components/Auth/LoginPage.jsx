@@ -112,86 +112,42 @@ const LoginPage = ({ onNavigate, onBack }) => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'var(--bg-app)',
-        color: 'var(--text-primary)',
-      }}
-    >
+    <div className="login-shell">
       {/* Top Header */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '18px 24px',
-          borderBottom: '1px solid var(--border-hairline)',
-        }}
-      >
-        <button
-          onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('dashboard') : null)}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '0.85rem',
-            color: 'var(--text-secondary)',
-            fontWeight: 500,
-            cursor: 'pointer',
-            padding: '6px 10px',
-            borderRadius: 'var(--radius-sm)',
-            transition: 'color 0.15s ease',
-          }}
-        >
-          <ArrowLeft size={16} />
-          <span>Back</span>
-        </button>
+      <header className="login-header">
+        <div className="login-header-inner">
+          <button
+            onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('dashboard') : null)}
+            className="login-back-btn"
+          >
+            <ArrowLeft size={16} />
+            <span>Back</span>
+          </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img
-            src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
-            alt="Rosestar Logo"
-            style={{ width: '22px', height: '22px', objectFit: 'contain' }}
-          />
-          <span style={{ fontWeight: 600, fontSize: '0.95rem', letterSpacing: '-0.02em' }}>
-            Rosestar
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img
+              src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
+              alt="Rosestar Logo"
+              style={{ width: '22px', height: '22px', objectFit: 'contain' }}
+            />
+            <span style={{ fontWeight: 700, fontSize: '0.95rem', letterSpacing: '-0.02em' }}>
+              Rosestar
+            </span>
+          </div>
+
+          <button
+            className="min-btn-icon"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          >
+            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
         </div>
-
-        <button
-          className="min-btn-icon"
-          onClick={toggleTheme}
-          title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-          style={{ width: '34px', height: '34px' }}
-        >
-          {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-        </button>
       </header>
 
       {/* Main Login Container */}
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '24px 16px 48px',
-        }}
-      >
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '440px',
-            background: 'var(--bg-surface)',
-            border: '1px solid var(--border-hairline)',
-            borderRadius: 'var(--radius-lg)',
-            boxShadow: 'var(--shadow-float)',
-            padding: '36px 32px',
-          }}
-        >
+      <div className="login-body">
+        <div className="login-card">
           {/* If already signed in */}
           {user ? (
             <div style={{ textAlign: 'center' }}>
@@ -249,30 +205,18 @@ const LoginPage = ({ onNavigate, onBack }) => {
           ) : (
             <>
               {/* Brand Header */}
-              <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                <div
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '14px',
-                    background: 'var(--bg-subtle)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 14px',
-                    border: '1px solid var(--border-hairline)',
-                  }}
-                >
+              <div style={{ textAlign: 'center' }}>
+                <div className="login-brand-icon">
                   <img
                     src={theme === 'dark' ? '/logo-white.png' : '/logo.png'}
                     alt="Rosestar"
                     style={{ width: '28px', height: '28px', objectFit: 'contain' }}
                   />
                 </div>
-                <h1 style={{ fontSize: '1.4rem', fontWeight: 600, marginBottom: '6px' }}>
+                <h1 className="login-title">
                   {mode === 'signin' ? 'Sign in to Rosestar' : 'Create your account'}
                 </h1>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <p className="login-subtitle">
                   Poultry farming intelligence & flock operations
                 </p>
               </div>
@@ -324,31 +268,7 @@ const LoginPage = ({ onNavigate, onBack }) => {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={googleLoading}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '12px',
-                  padding: '12px 16px',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-hairline)',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.92rem',
-                  fontWeight: 600,
-                  cursor: googleLoading ? 'wait' : 'pointer',
-                  transition: 'all 0.15s ease',
-                  boxShadow: 'var(--shadow-subtle)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--text-secondary)';
-                  e.currentTarget.style.background = 'var(--bg-subtle)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border-hairline)';
-                  e.currentTarget.style.background = 'var(--bg-surface)';
-                }}
+                className="login-oauth-btn"
               >
                 {googleLoading ? (
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -400,16 +320,7 @@ const LoginPage = ({ onNavigate, onBack }) => {
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="e.g. John Kamau"
                       required
-                      style={{
-                        width: '100%',
-                        padding: '10px 14px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px solid var(--border-hairline)',
-                        background: 'var(--bg-subtle)',
-                        color: 'var(--text-primary)',
-                        fontSize: '0.9rem',
-                        outline: 'none',
-                      }}
+                      className="login-input"
                     />
                   </div>
                 )}
@@ -432,16 +343,7 @@ const LoginPage = ({ onNavigate, onBack }) => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@farm.com"
                     required
-                    style={{
-                      width: '100%',
-                      padding: '10px 14px',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--border-hairline)',
-                      background: 'var(--bg-subtle)',
-                      color: 'var(--text-primary)',
-                      fontSize: '0.9rem',
-                      outline: 'none',
-                    }}
+                    className="login-input"
                   />
                 </div>
 
@@ -472,16 +374,8 @@ const LoginPage = ({ onNavigate, onBack }) => {
                       placeholder="••••••••"
                       required
                       minLength={6}
-                      style={{
-                        width: '100%',
-                        padding: '10px 42px 10px 14px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px solid var(--border-hairline)',
-                        background: 'var(--bg-subtle)',
-                        color: 'var(--text-primary)',
-                        fontSize: '0.9rem',
-                        outline: 'none',
-                      }}
+                      className="login-input"
+                      style={{ paddingRight: '42px' }}
                     />
                     <button
                       type="button"
