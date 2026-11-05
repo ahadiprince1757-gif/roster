@@ -143,15 +143,83 @@ export const checkApiHealth = () => api('/api/health');
 
 // ── Broiler Diseases Catalog ──────────────────────────────────────────────────
 
-export const fetchBroilerDiseases = (params = {}) => {
+export const fetchBroilerDiseases = async (params = {}) => {
   const query = new URLSearchParams();
   if (params.category && params.category !== 'All') query.set('category', params.category);
   if (params.severity && params.severity !== 'All') query.set('severity', params.severity);
-  if (params.emergency !== undefined) query.set('emergency', params.emergency);
+  if (params.emergency !== undefined && params.emergency !== '') query.set('emergency', params.emergency);
   if (params.search) query.set('search', params.search);
   const qs = query.toString();
-  return api('/api/broiler-diseases' + (qs ? '?' + qs : ''));
+
+  // 1. Try backend server route
+  try {
+    const res = await api('/api/broiler-diseases' + (qs ? '?' + qs : ''));
+    if (Array.isArray(res) && res.length > 0) {
+      return res;
+    }
+  } catch (err) {
+    console.warn('[BroilerDiseases] Backend route failed, falling back to direct Supabase query:', err?.message);
+  }
+
+  // 2. Direct Supabase query fallback
+  if (supabase) {
+    try {
+      let q = supabase
+        .from('broiler_diseases')
+        .select('*')
+        .order('severity_score', { ascending: false })
+        .order('name');
+
+      if (params.category && params.category !== 'All') {
+        q = q.eq('category', params.category);
+      }
+      if (params.severity && params.severity !== 'All') {
+        q = q.eq('severity', params.severity);
+      }
+      if (params.emergency !== undefined && params.emergency !== '') {
+        q = q.eq('emergency', params.emergency === true || params.emergency === 'true');
+      }
+
+      const { data, error } = await q;
+      if (!error && Array.isArray(data) && data.length > 0) {
+        if (!params.search || !params.search.trim()) return data;
+        const needle = params.search.toLowerCase().trim();
+        return data.filter((d) => {
+          const hay = [
+            d.name,
+            d.category,
+            ...(d.symptoms || []),
+            ...(d.broiler_signs || []),
+            ...(d.keywords || []),
+          ].join(' ').toLowerCase();
+          return hay.includes(needle);
+        });
+      }
+    } catch (sbErr) {
+      console.warn('[BroilerDiseases] Direct Supabase query failed:', sbErr?.message);
+    }
+  }
+
+  return null;
 };
 
-export const fetchBroilerDiseaseById = (id) =>
-  api('/api/broiler-diseases/' + id);
+export const fetchBroilerDiseaseById = async (id) => {
+  try {
+    const res = await api('/api/broiler-diseases/' + id);
+    if (res && !res.error) return res;
+  } catch (_) {}
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('broiler_diseases')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (data) return data;
+    } catch (_) {}
+  }
+
+  return null;
+};
+

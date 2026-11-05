@@ -1,58 +1,144 @@
 /**
  * Rosestar Poultry Problem Map & Diagnostic Engine
- * Clinical decision-support system for broiler and layer farmers.
- * 
- * Flow:
- * Observed Symptoms -> Triage Questions -> Ranked Causes + Confidence
- * -> Immediate Protocol ("DO THIS NOW")
- * -> Mistakes to Avoid ("WHAT NOT TO DO")
- * -> Critical Warning Signs ("WATCH FOR")
- * -> Escalation Criteria ("WHEN TO CALL A VET")
+ * Clinical decision-support system utilizing commercial broiler diseases & symptoms
+ * seeded in Supabase (Cobb 500 & Merck Veterinary Guide).
  */
 
+import { broilerDiseases as fallbackDiseases } from './broilerDiseases.js';
+
+/**
+ * Normalise any disease row from Supabase (snake_case) or local code (camelCase).
+ */
+export function normalizeDisease(d) {
+  if (!d) return null;
+  return {
+    id: d.id,
+    name: d.name || 'Unknown Condition',
+    category: d.category || 'General',
+    severity: d.severity || 'Moderate',
+    severityScore: Number(d.severity_score ?? d.severityScore ?? 2),
+    commonAge: d.common_age || d.commonAge || 'Any age',
+    symptoms: Array.isArray(d.symptoms) ? d.symptoms : [],
+    broilerSigns: Array.isArray(d.broiler_signs)
+      ? d.broiler_signs
+      : Array.isArray(d.broilerSigns)
+      ? d.broilerSigns
+      : [],
+    whatToDoNow: Array.isArray(d.what_to_do_now)
+      ? d.what_to_do_now
+      : Array.isArray(d.whatToDoNow)
+      ? d.whatToDoNow
+      : [],
+    prevention: Array.isArray(d.prevention) ? d.prevention : [],
+    treatment: {
+      type: d.treatment_type || d.treatment?.type || 'Veterinary Consultation',
+      action: d.treatment_action || d.treatment?.action || 'Isolate affected birds and seek professional veterinary guidance.',
+      note: d.treatment_note || d.treatment?.note || '',
+    },
+    emergency: Boolean(d.emergency),
+    reportable: Boolean(d.reportable),
+    zoonotic: Boolean(d.zoonotic),
+    veterinarian: d.veterinarian !== false,
+    keywords: Array.isArray(d.keywords) ? d.keywords : [],
+  };
+}
+
+export const DEFAULT_DISEASES = fallbackDiseases.map(normalizeDisease);
+
+/**
+ * Primary physiological symptom groups mapped to the 22 commercial diseases
+ */
 export const PRIMARY_SYMPTOM_CATEGORIES = [
-  {
-    id: 'locomotion',
-    title: 'Cannot Walk / Lame',
-    subtitle: 'Sitting on hocks, limping, twisted legs, inability to reach feeders',
-    icon: 'Footprints',
-    badge: 'High Impact',
-  },
   {
     id: 'respiratory',
     title: 'Breathing & Sneezing',
-    subtitle: 'Gasping, night rales, wet eyes, coughing, swollen face',
+    subtitle: 'Gasping, night rales/snick, eye discharge, coughing, swollen sinuses',
     icon: 'Wind',
     badge: 'Urgent',
+    matchingCategories: ['Viral', 'Bacterial', 'Fungal'],
   },
   {
     id: 'droppings',
     title: 'Abnormal Droppings',
-    subtitle: 'Bloody, watery white, orange mucus, bright green or undigested feed',
+    subtitle: 'Bloody droppings, chalky white paste, yellow/mustard, bright green diarrhea',
     icon: 'AlertTriangle',
     badge: 'Critical',
+    matchingCategories: ['Protozoal', 'Bacterial', 'Viral'],
+  },
+  {
+    id: 'locomotion',
+    title: 'Cannot Walk / Lame',
+    subtitle: 'Sitting on hocks, limping, twisted legs, swollen footpads or joints',
+    icon: 'Footprints',
+    badge: 'High Impact',
+    matchingCategories: ['Bacterial', 'Nutritional', 'Viral'],
+  },
+  {
+    id: 'neurological',
+    title: 'Twisting Neck & Tremors',
+    subtitle: 'Twisted neck (torticollis), ataxia, circling, head/neck tremors, paralysis',
+    icon: 'RotateCcw',
+    badge: 'Emergency',
+    matchingCategories: ['Viral'],
   },
   {
     id: 'mortality',
     title: 'Sudden Mortality Spike',
-    subtitle: 'Birds dying suddenly, dead on back, unexplained losses overnight',
+    subtitle: 'Dead on back, rapid flock loss, dark purple combs, severe prostration',
     icon: 'Skull',
     badge: 'Emergency',
+    matchingCategories: ['Environmental', 'Viral', 'Bacterial'],
+  },
+  {
+    id: 'appetite',
+    title: 'Not Eating / Dehydrated',
+    subtitle: 'Crop empty, listless, hollow shanks, huddling under heat lamps',
+    icon: 'UtensilsCrossed',
+    badge: 'Early Warning',
+    matchingCategories: ['Environmental', 'Bacterial', 'Protozoal'],
   },
   {
     id: 'growth',
     title: 'Not Growing / Uneven',
-    subtitle: 'Runts, weight far behind target, high feed intake with low gain',
+    subtitle: 'Runts, weight far behind target, poor feathering, pale shanks',
     icon: 'TrendingDown',
     badge: 'Economic Leak',
+    matchingCategories: ['Nutritional', 'Bacterial', 'Environmental'],
   },
   {
-    id: 'appetite',
-    title: 'Not Eating / Not Drinking',
-    subtitle: 'Lethargic, huddling under brooder, crop empty, listless',
-    icon: 'UtensilsCrossed',
-    badge: 'Early Warning',
+    id: 'head_skin',
+    title: 'Head, Eyes & Scabs',
+    subtitle: 'Warty nodules/scabs on comb and wattles, swollen face, closed eyelids',
+    icon: 'HelpCircle',
+    badge: 'Specialized',
+    matchingCategories: ['Viral', 'Bacterial'],
   },
+];
+
+/**
+ * Quick-select symptom chips directly from the 22 seeded Supabase diseases
+ */
+export const COMMON_SYMPTOM_CHIPS = [
+  'Bloody droppings or blood in litter',
+  'Chalky white watery diarrhea',
+  'Twisted neck (torticollis) / circling',
+  'Difficulty breathing / open-mouth gasping',
+  'Snoring or clicking sounds at night (rales)',
+  'Sitting on hocks / lameness',
+  'Panting with wings held away from body',
+  'Dead on back with wings spread',
+  'Swollen face / puffy eye discharge',
+  'Warty nodules / scabs on comb or wattles',
+  'Green or yellowish-green watery diarrhea',
+  'Sudden rise in flock mortality rate',
+  'Dehydration / hollow shanks / empty crop',
+  'Head and neck tremors',
+  'Sulfur-yellow watery droppings',
+  'Uneven flock size / small runts',
+  'Severe depression and huddling tightly',
+  'Coughing blood or mucus onto walls',
+  'Rubbery pliable bones and beaks',
+  'Swollen warm hock joints or footpad scab',
 ];
 
 export const TRIAGE_QUESTIONS = [
@@ -62,7 +148,7 @@ export const TRIAGE_QUESTIONS = [
     options: [
       { value: 'brooding', label: 'Day 1 – 10 (Brooding phase)' },
       { value: 'grower', label: 'Day 11 – 24 (Grower phase)' },
-      { value: 'finisher', label: 'Day 25+ (Finisher / Pre-market)' },
+      { value: 'finisher', label: 'Day 25+ (Finisher / Pre-harvest)' },
     ],
   },
   {
@@ -78,10 +164,11 @@ export const TRIAGE_QUESTIONS = [
     id: 'droppingsState',
     label: 'What do the droppings look like?',
     options: [
-      { value: 'normal', label: 'Normal firm brownish with white uric acid cap' },
+      { value: 'normal', label: 'Normal firm brownish with white cap' },
       { value: 'bloody', label: 'Bloody or reddish currant-jelly streaks' },
       { value: 'white', label: 'Chalky watery white or creamy paste' },
       { value: 'watery_green', label: 'Bright yellowish-green watery diarrhea' },
+      { value: 'yellow', label: 'Bright sulfur-yellow or mustard droppings' },
       { value: 'undigested', label: 'Wet watery with unabsorbed feed grain' },
     ],
   },
@@ -91,8 +178,9 @@ export const TRIAGE_QUESTIONS = [
     options: [
       { value: 'normal', label: 'Eating and drinking normally' },
       { value: 'reduced_feed', label: 'Feed consumption dropped noticeably' },
+      { value: 'reduced_feed_increased_water', label: 'Feed dropped, water consumption surged (panting)' },
       { value: 'reduced_water', label: 'Water consumption dropped' },
-      { value: 'refusing_all', label: 'Refusing both feed and water' },
+      { value: 'refusing_all', label: 'Refusing both feed and water completely' },
     ],
   },
   {
@@ -100,273 +188,438 @@ export const TRIAGE_QUESTIONS = [
     label: 'Any recent changes on the farm in the last 48 hours?',
     options: [
       { value: 'none', label: 'No significant changes' },
-      { value: 'feed_switch', label: 'Changed feed brand or batch' },
-      { value: 'weather_heat', label: 'Extreme heatwave or cold spike' },
-      { value: 'vaccination', label: 'Recent vaccination within 3 days' },
       { value: 'wet_litter', label: 'Damp/wet bedding around drinkers' },
+      { value: 'weather_heat', label: 'Extreme heatwave or high shed humidity' },
+      { value: 'feed_switch', label: 'Changed feed brand or batch recently' },
+      { value: 'vaccination', label: 'Recent vaccination within 3–4 days' },
+      { value: 'cold_chilling', label: 'Chilling / power cut / brooder cold spike' },
     ],
   },
 ];
 
 /**
- * Diagnostic Knowledge Base
+ * Generate clinically safe contraindications ("WHAT NOT TO DO") based on disease profile
  */
-export const DIAGNOSTIC_CONDITIONS = [
-  {
-    id: 'coccidiosis_caecal',
-    name: 'Caecal Coccidiosis (Eimeria tenella)',
-    category: 'droppings',
-    severity: 'High',
-    matchRule: (answers, primary) => {
-      let score = 0;
-      if (primary === 'droppings' || primary === 'mortality') score += 40;
-      if (answers.droppingsState === 'bloody') score += 50;
-      if (answers.ageRange === 'grower') score += 15;
-      if (answers.recentChange === 'wet_litter') score += 15;
-      return score;
-    },
-    summary: 'Parasitic protozoan multiplying rapidly inside the bird’s caeca, causing severe internal bleeding.',
-    evidence: [
-      'Bloody droppings or blood clots in litter',
-      'Pale comb, wattles, and shanks from blood loss',
-      'Huddling, ruffled feathers, and listlessness',
-    ],
-    doThisNow: [
-      'Administer water-soluble Amprolium, Toltrazuril, or Sulfaquinoxaline strictly via drinking water immediately.',
-      'Do not rely on medicated feed—sick birds stop eating before they stop drinking.',
-      'Remove damp litter clumps around drinkers and replace with dry, clean wood shavings.',
-      'Add Vitamin K to drinking water to help blood coagulation and stop hemorrhaging.',
-    ],
-    whatNotToDo: [
-      'DO NOT use broad-spectrum tetracyclines or random antibiotics—coccidia are protozoa, not bacteria.',
-      'DO NOT restrict water; dehydration accelerates death exponentially.',
-      'DO NOT let litter stay wet—moisture and heat incubate millions of coccidial oocysts in 24 hours.',
-    ],
-    watchFor: [
-      'Number of dead birds found around brooding lights or corners.',
-      'Whether droppings clear from red to brown within 36 hours of treatment.',
-    ],
-    whenToCallVet: [
-      'Mortality exceeds 1% of flock in a single 12-hour period.',
-      'No improvement after 48 hours of targeted anticoccidial water treatment.',
-    ],
-  },
+function generateWhatNotToDo(disease) {
+  const mistakes = [];
+  const cat = (disease.category || '').toLowerCase();
+  const id = disease.id || '';
 
-  {
-    id: 'rickets_minerals',
-    name: 'Rickets / Calcium-Phosphorus Imbalance',
-    category: 'locomotion',
-    severity: 'Medium',
-    matchRule: (answers, primary) => {
-      let score = 0;
-      if (primary === 'locomotion') score += 45;
-      if (answers.eatingState === 'normal') score += 20; // Birds eat if feed brought near them
-      if (answers.droppingsState === 'normal') score += 15;
-      if (answers.ageRange === 'brooding' || answers.ageRange === 'grower') score += 20;
-      if (answers.recentChange === 'feed_switch') score += 15;
-      return score;
-    },
-    summary: 'Deficiency or wrong ratio of Calcium, Phosphorus, or Vitamin D3, causing soft, pliable bones unable to support fast muscle mass.',
-    evidence: [
-      'Birds sitting on hocks; beaks and long bones feel rubbery and flexible rather than rigid',
-      'Chicks remain bright and hungry, actively eating if feed trough is placed directly in front of them',
-      'No bloody droppings or respiratory distress',
-    ],
-    doThisNow: [
-      'Provide Vitamin D3 + Calcium + Phosphorus water supplement immediately.',
-      'Move waterers and feeder trays directly onto floor level so crippled birds do not starve or dehydrate.',
-      'Verify feed mill batch quality—test if feed has adequate mineral premix.',
-    ],
-    whatNotToDo: [
-      'DO NOT treat with antibiotics; this is purely metabolic/nutritional.',
-      'DO NOT cull birds immediately if they are still alert—mineral supplementation often reverses early rickets in 4–5 days.',
-    ],
-    watchFor: [
-      'Whether birds can stand upright after 72 hours of Vitamin D3 / mineral therapy.',
-      'Bedding burns (hocks sores) developing on sitting birds.',
-    ],
-    whenToCallVet: [
-      'More than 15% of the batch cannot stand within 48 hours.',
-      'Joints feel hot, red, or filled with pus (indicates bacterial arthritis/Staph, not pure rickets).',
-    ],
-  },
+  if (cat.includes('viral')) {
+    mistakes.push('DO NOT administer random antibiotics hoping to cure the virus — antibiotics do not kill viruses.');
+    mistakes.push('DO NOT vaccinate an actively sick flock with live vaccine; it triggers higher mortality.');
+  }
 
-  {
-    id: 'gumboro_ibd',
-    name: 'Gumboro Disease (Infectious Bursal Disease - IBD)',
-    category: 'mortality',
-    severity: 'Critical',
-    matchRule: (answers, primary) => {
-      let score = 0;
-      if (primary === 'mortality' || primary === 'droppings') score += 40;
-      if (answers.droppingsState === 'white') score += 40;
-      if (answers.ageRange === 'grower') score += 25; // Peak Day 18-28
-      if (answers.scope === 'widespread') score += 20;
-      return score;
-    },
-    summary: 'Highly contagious viral infection targeting the Bursa of Fabricius, destroying immune defenses with a sharp spike in mortality between Day 18–28.',
-    evidence: [
-      'Birds pecking at their own vent; watery chalky-white vent feathers pasting',
-      'Severe depression, tremors, ruffled feathers, huddling together tightly',
-      'Spike in mortality that rises steeply for 3 days then subsides',
-    ],
-    doThisNow: [
-      'Flush with electrolytes + Vitamin C + Paracetamol/Analgesic in drinking water to reduce fever and kidney stress.',
-      'Increase house temperature slightly (2°C) as sick birds suffer hypothermia.',
-      'Strictly disinfect footwear before entering and contain flock to prevent cross-pen transmission.',
-    ],
-    whatNotToDo: [
-      'DO NOT vaccinate an actively infected sick flock with live IBD vaccine; it accelerates mortality.',
-      'DO NOT use nephrotoxic antibiotics (like high-dose sulfonamides or gentamicin) as Gumboro already damages kidneys.',
-    ],
-    watchFor: [
-      'Daily death curve; IBD typically peaks at day 3 of onset and recedes by day 5–7.',
-      'Signs of secondary bacterial infections (E. coli) taking advantage of immune crash.',
-    ],
-    whenToCallVet: [
-      'Urgent post-mortem required: Check if Bursa is swollen/hemorrhagic and thighs have pin-point muscle bleeds.',
-      'Mortality curve climbs above 2% daily.',
-    ],
-  },
+  if (id.includes('coccidiosis')) {
+    mistakes.push('DO NOT rely on medicated feed alone — sick birds stop eating before they stop drinking; use drinking water.');
+    mistakes.push('DO NOT use broad-spectrum tetracyclines; coccidia are protozoa requiring targeted anticoccidials.');
+  }
 
-  {
-    id: 'chronic_respiratory_disease',
-    name: 'CRD (Chronic Respiratory Disease / Mycoplasma + E. coli)',
-    category: 'respiratory',
-    severity: 'High',
-    matchRule: (answers, primary) => {
-      let score = 0;
-      if (primary === 'respiratory') score += 45;
-      if (answers.recentChange === 'wet_litter' || answers.recentChange === 'weather_heat') score += 15;
-      if (answers.eatingState === 'reduced_feed') score += 20;
-      if (answers.ageRange === 'grower' || answers.ageRange === 'finisher') score += 15;
-      return score;
-    },
-    summary: 'Mycoplasma gallisepticum complicated by secondary E. coli, provoked by poor house ventilation and ammonia fumes.',
-    evidence: [
-      'Snoring or clicking sounds heard clearly at night when the shed is quiet',
-      'Watery eyes, foamy eye corners, nasal discharge, or facial swelling',
-      'Gradual drop in feed consumption and weight stagnation',
-    ],
-    doThisNow: [
-      'Improve side-curtain ventilation immediately—ammonia above 20 ppm paralyzes the bird’s tracheal cilia.',
-      'Consult agrovet for approved respiratory antimicrobials (e.g., Tylosin, Doxycycline, or Enrofloxacin).',
-      'Add menthol/essential oil vaporizers or spray to ease breathing airways.',
-    ],
-    whatNotToDo: [
-      'DO NOT close curtains completely to "keep them warm"—trapped ammonia is the exact trigger.',
-      'DO NOT leave dead or severely gasping birds in the pen—they continuously aerosolize bacteria.',
-    ],
-    watchFor: [
-      'Swelling around the eyes turning into hard cheesy plugs (sinusitis).',
-      'FCR worsening as birds consume feed without putting on weight.',
-    ],
-    whenToCallVet: [
-      'Breathing accompanied by gasping with outstretched necks.',
-      'High mortality with greenish droppings (could be velogenic Newcastle Disease rather than standard CRD).',
-    ],
-  },
+  if (id.includes('heat_stress')) {
+    mistakes.push('DO NOT feed heavy pellets during the hottest hours (11 AM – 4 PM) — digestion creates massive internal heat.');
+    mistakes.push('DO NOT supply warm or sun-heated pipeline water; flush lines to keep water cool.');
+  }
 
-  {
-    id: 'heat_stress_flip',
-    name: 'Acute Heat Stress & Heart Failure (Flip-Over)',
-    category: 'mortality',
-    severity: 'Urgent',
-    matchRule: (answers, primary) => {
-      let score = 0;
-      if (primary === 'mortality' || primary === 'appetite') score += 40;
-      if (answers.recentChange === 'weather_heat') score += 35;
-      if (answers.ageRange === 'finisher') score += 25; // Heaviest birds succumb first
-      if (answers.eatingState === 'reduced_feed' || answers.eatingState === 'reduced_water') score += 15;
-      return score;
-    },
-    summary: 'Broilers have no sweat glands. In heavy finishers, heat buildup leads to hyperventilation, blood alkalosis, and sudden cardiac failure.',
-    evidence: [
-      'Heaviest, best-performing birds found dead on their backs with wings spread',
-      'Intense panting, rapid chest movement, wings held loosely away from body',
-      'Water consumption up 200–300% while feed intake drops to near zero during midday',
-    ],
-    doThisNow: [
-      'Withdraw feed 2–3 hours before peak afternoon heat—digestion produces intense internal metabolic heat.',
-      'Add Vitamin C (Ascorbic Acid) + Sodium Bicarbonate (baking soda) + Electrolytes to cool drinking water.',
-      'Run roof sprinklers, wet burlap sacks on windward curtains, or increase fan airflow.',
-      'Ensure cool drinking water—flush tank and pipes if water is warm.',
-    ],
-    whatNotToDo: [
-      'DO NOT disturb or walk through the flock during hottest hours (12 PM – 4 PM).',
-      'DO NOT feed heavy pelleted feed during the heat peak.',
-      'DO NOT supply warm or sun-heated pipe water.',
-    ],
-    watchFor: [
-      'Birds crowding under drinkers or in pen corners suffocating each other.',
-      'Water meter consumption trends during 11 AM – 3 PM.',
-    ],
-    whenToCallVet: [
-      'House temperature exceeds 33°C (91°F) for over 4 continuous hours.',
-      'Sudden death of > 1% of heavy birds within 24 hours of hot weather.',
-    ],
-  },
+  if (id.includes('nutritional') || id.includes('rickets')) {
+    mistakes.push('DO NOT treat with antibiotics; this is metabolic/nutritional and requires mineral + vitamin D3 rebalancing.');
+    mistakes.push('DO NOT cull alert birds prematurely; early rickets can reverse with oral minerals in 3–5 days.');
+  }
 
-  {
-    id: 'stunted_growth_brooding',
-    name: 'Early Brooding Stunting & Crop Starvation',
-    category: 'growth',
-    severity: 'Medium',
-    matchRule: (answers, primary) => {
-      let score = 0;
-      if (primary === 'growth' || primary === 'appetite') score += 50;
-      if (answers.ageRange === 'brooding' || answers.ageRange === 'grower') score += 30;
-      if (answers.scope === 'cluster' || answers.scope === 'widespread') score += 15;
-      return score;
-    },
-    summary: 'Failure of early crop fill in the first 48 hours or cold stress leads to permanent gut villi stunting and uneven flock growth.',
-    evidence: [
-      'Wide gap in bird sizes: 20–30% of chicks are half the size of normal birds',
-      'Chicks have poor feathering, unabsorbed yolk remnants, or pasty vents',
-      'Crops felt empty or hard at 24 hours post-placement',
-    ],
-    doThisNow: [
-      'Conduct a 20-bird crop check: gently feel crops. At 24h, 95% should be soft, full, and pliable like dough.',
-      'Double the number of feeder trays on paper for easy accessibility.',
-      'Ensure brooding floor temperature is 32°C (not just air temp, check concrete/litter).',
-      'Separate small runts into a dedicated "recovery nursery pen" with lower feeders and high-density crumble.',
-    ],
-    whatNotToDo: [
-      'DO NOT allow larger birds to bully smaller birds away from feed troughs.',
-      'DO NOT switch from starter crumble to coarse grower pellets too early.',
-    ],
-    watchFor: [
-      '7-day body weight: target should be at least 4.5x day-old chick placement weight (~180g+).',
-    ],
-    whenToCallVet: [
-      'Average 7-day weight is 30% below breed standard.',
-      'Belly feels tight, watery, or distended (Ascites / systemic infection).',
-    ],
-  },
-];
+  if (id.includes('mycoplasma') || id.includes('crd') || id.includes('coryza')) {
+    mistakes.push('DO NOT close curtains completely to "keep them warm" — trapped ammonia gas is the exact trigger for respiratory flare-ups.');
+  }
+
+  if (id.includes('gumboro') || id.includes('pullorum')) {
+    mistakes.push('DO NOT administer nephrotoxic drugs (like high-dose sulphas) without vet approval, as kidneys are already inflamed.');
+  }
+
+  if (mistakes.length === 0) {
+    mistakes.push('DO NOT guess antibiotic dosages without veterinary diagnostic sensitivity testing.');
+    mistakes.push('DO NOT leave dead or moribund birds in the pen — they continuously aerosolize pathogens.');
+  }
+
+  return mistakes;
+}
 
 /**
- * Run Diagnostic Triage Algorithm
+ * Generate daily monitoring checkpoints ("WATCH FOR TODAY")
  */
-export function diagnoseFlock(primarySymptomId, answers = {}) {
-  const ranked = DIAGNOSTIC_CONDITIONS.map((cond) => {
-    const score = cond.matchRule(answers, primarySymptomId);
-    return {
-      ...cond,
-      score,
-      confidence: Math.min(96, Math.max(25, score)),
+function generateWatchFor(disease) {
+  const watchList = [];
+  const id = disease.id || '';
+
+  if (id.includes('coccidiosis') || id.includes('necrotic')) {
+    watchList.push('Check whether droppings transition from red/bloody back to brown within 36–48 hours of water medication.');
+    watchList.push('Litter moisture levels near drinkers and wall edges.');
+  } else if (id.includes('heat_stress')) {
+    watchList.push('Water meter flow rate between 11 AM and 3 PM compared to flock baseline.');
+    watchList.push('Any birds crowding under drinkers or in house corners suffocating each other.');
+  } else if (id.includes('respiratory') || id.includes('crd') || id.includes('bronchitis') || id.includes('laryngo')) {
+    watchList.push('Night rales / snoring clicking sounds 1 hour after shed lights are dimmed.');
+    watchList.push('Whether eye discharge turns into hard cheesy facial swellings.');
+  } else {
+    watchList.push('Flock mortality trend over the next 12 and 24 hours.');
+    watchList.push('Spread of symptoms from initial cluster into neighboring pens or drinker lines.');
+  }
+
+  watchList.push('Feed conversion and daily water intake compared to Cobb 500 standard.');
+  return watchList;
+}
+
+/**
+ * Generate escalation rules ("WHEN TO CALL A VET")
+ */
+function generateWhenToCallVet(disease) {
+  const rules = [];
+
+  if (disease.emergency || disease.severity === 'Critical') {
+    rules.push('CALL A VETERINARIAN IMMEDIATELY: This is a high-severity critical flock condition with risk of catastrophic loss.');
+  }
+
+  if (disease.reportable) {
+    rules.push('LEGAL OBLIGATION: Report immediately to local animal-health or veterinary authorities.');
+  }
+
+  if (disease.zoonotic) {
+    rules.push('BIO-HAZARD WARNING: Potential zoonotic transmission to humans. Wear N95 masks, gloves, and strict PPE.');
+  }
+
+  rules.push('Flock mortality exceeds 0.5% – 1% in a single 24-hour window.');
+  rules.push('No clinical response or improvement within 48 hours of initiating first-line management protocol.');
+  rules.push('Need for necropsy (post-mortem examination) to inspect internal organs (caeca, bursa, lungs, liver).');
+
+  return rules;
+}
+
+/**
+ * Run Diagnostic Triage Algorithm over the live 22 seeded Supabase broiler diseases.
+ * Supports both signatures:
+ *   - diagnoseFlock(diseasesList, options)
+ *   - diagnoseFlock(primarySymptomId, answers) [backward compatibility]
+ */
+export function diagnoseFlock(arg1, arg2 = {}) {
+  let diseases = DEFAULT_DISEASES;
+  let options = {};
+
+  if (Array.isArray(arg1)) {
+    diseases = arg1.length > 0 ? arg1.map(normalizeDisease) : DEFAULT_DISEASES;
+    options = arg2 || {};
+  } else if (typeof arg1 === 'string') {
+    options = {
+      primarySymptomId: arg1,
+      answers: arg2 || {},
     };
-  })
-    .sort((a, b) => b.score - a.score);
+  }
 
-  const topMatch = ranked[0];
-  const secondaryMatches = ranked.slice(1, 3).filter((m) => m.score > 35);
+  const {
+    primarySymptomId = null,
+    selectedSymptoms = [],
+    answers = {},
+    freeformText = '',
+  } = options;
+
+  const freeform = (freeformText || '').toLowerCase().trim();
+  const selectedSymSet = new Set(selectedSymptoms.map((s) => s.toLowerCase()));
+
+  // Score each disease against clinical evidence
+  const scored = diseases.map((disease) => {
+    let score = 0;
+    const evidence = [];
+
+    const dName = (disease.name || '').toLowerCase();
+    const dSymptoms = (disease.symptoms || []).map((s) => s.toLowerCase());
+    const dSigns = (disease.broilerSigns || []).map((s) => s.toLowerCase());
+    const dKeywords = (disease.keywords || []).map((s) => s.toLowerCase());
+    const dCommonAge = (disease.commonAge || '').toLowerCase();
+    const dCategory = (disease.category || '').toLowerCase();
+
+    // 1. Match selected symptom chips
+    selectedSymSet.forEach((sym) => {
+      const matchSymptom = dSymptoms.some((ds) => ds.includes(sym) || sym.includes(ds));
+      const matchSign = dSigns.some((ds) => ds.includes(sym) || sym.includes(ds));
+      const matchKeyword = dKeywords.some((k) => sym.includes(k));
+
+      if (matchSymptom) {
+        score += 35;
+        evidence.push(sym);
+      } else if (matchSign || matchKeyword) {
+        score += 20;
+        evidence.push(sym);
+      }
+    });
+
+    // 2. Match freeform text input
+    if (freeform) {
+      if (dName && freeform.includes(dName)) {
+        score += 45;
+        evidence.push(`Direct condition mention: "${disease.name}"`);
+      }
+
+      dKeywords.forEach((kw) => {
+        if (kw.length > 2 && freeform.includes(kw)) {
+          score += 15;
+          evidence.push(`Clinical keyword: "${kw}"`);
+        }
+      });
+
+      dSymptoms.forEach((s) => {
+        const words = s.split(/\s+/).filter((w) => w.length > 3);
+        const hit = words.filter((w) => freeform.includes(w));
+        if (hit.length >= 2) {
+          score += 25;
+          evidence.push(s);
+        }
+      });
+    }
+
+    // 3. Primary Observation Category alignment
+    if (primarySymptomId) {
+      if (primarySymptomId === 'respiratory') {
+        if (
+          dCategory === 'bacterial' ||
+          dCategory === 'viral' ||
+          dCategory === 'fungal' ||
+          dKeywords.some((k) => ['crd', 'respiratory', 'cough', 'gasp', 'snick', 'rales', 'sinus', 'trachea'].includes(k)) ||
+          dSymptoms.some((s) => s.includes('breath') || s.includes('gasp') || s.includes('cough') || s.includes('rales'))
+        ) {
+          score += 25;
+        }
+      } else if (primarySymptomId === 'droppings') {
+        if (
+          disease.id.includes('coccidiosis') ||
+          disease.id.includes('necrotic') ||
+          disease.id.includes('bursal') ||
+          disease.id.includes('pullorum') ||
+          disease.id.includes('histomoniasis') ||
+          disease.id.includes('salmonella') ||
+          dSymptoms.some((s) => s.includes('diarrhea') || s.includes('dropping'))
+        ) {
+          score += 30;
+        }
+      } else if (primarySymptomId === 'locomotion') {
+        if (
+          disease.id.includes('staphylococcal') ||
+          disease.id.includes('nutritional') ||
+          disease.id.includes('marek') ||
+          disease.id.includes('encephalomyelitis') ||
+          dSymptoms.some((s) => s.includes('hock') || s.includes('walk') || s.includes('lame') || s.includes('paralysis'))
+        ) {
+          score += 30;
+        }
+      } else if (primarySymptomId === 'neurological') {
+        if (
+          disease.id.includes('newcastle') ||
+          disease.id.includes('encephalomyelitis') ||
+          disease.id.includes('marek') ||
+          dSymptoms.some((s) => s.includes('neck') || s.includes('torticollis') || s.includes('tremor') || s.includes('circling'))
+        ) {
+          score += 40;
+        }
+      } else if (primarySymptomId === 'mortality') {
+        if (
+          disease.severityScore >= 3 ||
+          disease.emergency ||
+          disease.id.includes('heat_stress') ||
+          disease.id.includes('influenza') ||
+          disease.id.includes('cholera') ||
+          disease.id.includes('bursal')
+        ) {
+          score += 25;
+        }
+      } else if (primarySymptomId === 'appetite') {
+        if (
+          disease.id.includes('dehydration') ||
+          disease.id.includes('bursal') ||
+          disease.id.includes('pullorum') ||
+          disease.id.includes('coccidiosis') ||
+          dSymptoms.some((s) => s.includes('appetite') || s.includes('thirst') || s.includes('feed intake'))
+        ) {
+          score += 25;
+        }
+      } else if (primarySymptomId === 'growth') {
+        if (
+          disease.id.includes('nutritional') ||
+          disease.id.includes('ecoli') ||
+          disease.id.includes('necrotic') ||
+          disease.id.includes('aspergillosis') ||
+          dSigns.some((s) => s.includes('uniformity') || s.includes('weight') || s.includes('runt'))
+        ) {
+          score += 25;
+        }
+      } else if (primarySymptomId === 'head_skin') {
+        if (
+          disease.id.includes('pox') ||
+          disease.id.includes('coryza') ||
+          disease.id.includes('bronchitis') ||
+          dSymptoms.some((s) => s.includes('comb') || s.includes('wattle') || s.includes('scab') || s.includes('face'))
+        ) {
+          score += 35;
+        }
+      }
+    }
+
+    // 4. Age compatibility alignment
+    const age = answers.ageRange;
+    if (age === 'brooding') {
+      if (
+        dCommonAge.includes('day 1') ||
+        dCommonAge.includes('chick') ||
+        dCommonAge.includes('brooding') ||
+        dCommonAge.includes('young')
+      ) {
+        score += 20;
+      }
+    } else if (age === 'grower') {
+      if (
+        dCommonAge.includes('grow') ||
+        dCommonAge.includes('3–6 weeks') ||
+        dCommonAge.includes('14 to 35') ||
+        dCommonAge.includes('day 14')
+      ) {
+        score += 20;
+      }
+    } else if (age === 'finisher') {
+      if (
+        dCommonAge.includes('finisher') ||
+        dCommonAge.includes('older') ||
+        dCommonAge.includes('week 4') ||
+        dCommonAge.includes('heavy') ||
+        dCommonAge.includes('pre-market')
+      ) {
+        score += 20;
+      }
+    }
+    if (dCommonAge.includes('any age')) {
+      score += 8;
+    }
+
+    // 5. Droppings alignment
+    const dr = answers.droppingsState;
+    if (dr === 'bloody') {
+      if (disease.id.includes('coccidiosis')) {
+        score += 55;
+        evidence.push('Bloody currant-jelly droppings strongly indicate Caecal Coccidiosis.');
+      } else if (disease.id.includes('necrotic')) {
+        score += 40;
+        evidence.push('Dark/bloody diarrhea matches Clostridial Necrotic Enteritis.');
+      }
+    } else if (dr === 'white') {
+      if (disease.id.includes('bursal')) {
+        score += 50;
+        evidence.push('Chalky white vent feathers pasting is classic Gumboro (IBD).');
+      } else if (disease.id.includes('pullorum')) {
+        score += 50;
+        evidence.push('White diarrhea paste in young chicks indicates Pullorum disease.');
+      }
+    } else if (dr === 'watery_green') {
+      if (disease.id.includes('newcastle')) {
+        score += 45;
+        evidence.push('Bright green watery diarrhea indicates Newcastle challenge.');
+      } else if (disease.id.includes('cholera')) {
+        score += 35;
+        evidence.push('Greenish diarrhea matches Fowl Cholera.');
+      }
+    } else if (dr === 'yellow') {
+      if (disease.id.includes('histomoniasis')) {
+        score += 55;
+        evidence.push('Bright sulfur-yellow droppings are pathognomonic for Histomoniasis (Blackhead).');
+      }
+    } else if (dr === 'undigested') {
+      if (disease.id.includes('necrotic') || disease.id.includes('ecoli')) {
+        score += 25;
+        evidence.push('Undigested feed passage indicates dysbiosis or gut wall enteritis.');
+      }
+    }
+
+    // 6. Eating & Drinking Behavior
+    const eat = answers.eatingState;
+    if (eat === 'reduced_feed_increased_water') {
+      if (disease.id.includes('heat_stress')) {
+        score += 50;
+        evidence.push('Rapid panting + feed refusal with surging water consumption confirms acute heat stress.');
+      }
+    } else if (eat === 'refusing_all') {
+      if (disease.severityScore >= 3 || disease.id.includes('dehydration') || disease.id.includes('bursal')) {
+        score += 20;
+        evidence.push('Total refusal of both feed and water indicates critical systemic toxemia or chilling.');
+      }
+    } else if (eat === 'normal') {
+      if (disease.id.includes('nutritional') || disease.id.includes('staphylococcal')) {
+        score += 20;
+        evidence.push('Birds remain bright and hungry, eating readily if feed is brought within reach.');
+      }
+    }
+
+    // 7. Recent Changes
+    const change = answers.recentChange;
+    if (change === 'weather_heat' && disease.id.includes('heat_stress')) {
+      score += 45;
+      evidence.push('Recent extreme heatwave directly matches broiler heat exhaustion.');
+    } else if (change === 'wet_litter' && (disease.id.includes('coccidiosis') || disease.id.includes('mycoplasma'))) {
+      score += 25;
+      evidence.push('Damp litter and drinker leaks incubate oocysts and elevate ammonia.');
+    } else if (change === 'feed_switch' && (disease.id.includes('necrotic') || disease.id.includes('nutritional'))) {
+      score += 25;
+      evidence.push('Abrupt feed change triggers dysbiosis or unmasks mineral ratio deficits.');
+    } else if (change === 'cold_chilling' && (disease.id.includes('aspergillosis') || disease.id.includes('dehydration') || disease.id.includes('bronchitis'))) {
+      score += 25;
+      evidence.push('Brooder chilling weakens respiratory cilia and lowers gut mobility.');
+    }
+
+    // Default evidence fallback if scored
+    const uniqueEvidence = Array.from(new Set(evidence));
+    if (uniqueEvidence.length === 0 && score > 0) {
+      if (disease.broilerSigns?.length > 0) {
+        uniqueEvidence.push(disease.broilerSigns[0]);
+      } else if (disease.symptoms?.length > 0) {
+        uniqueEvidence.push(disease.symptoms[0]);
+      }
+    }
+
+    // Calculate normalized confidence percentage (between 30% and 96%)
+    const confidence = Math.min(96, Math.max(30, Math.round(score * 0.75 + disease.severityScore * 3)));
+
+    return {
+      ...disease,
+      score,
+      confidence,
+      evidence: uniqueEvidence,
+      summary:
+        disease.broilerSigns?.[0] ||
+        disease.symptoms?.[0] ||
+        'Commercial broiler clinical condition requiring close biosecurity and immediate management.',
+      doThisNow: disease.whatToDoNow?.length > 0 ? disease.whatToDoNow : [
+        'Isolate any affected birds immediately from healthy flock.',
+        'Review ventilation, litter dryness, and clean water availability.',
+        'Contact poultry veterinarian for confirmation.',
+      ],
+      whatNotToDo: generateWhatNotToDo(disease),
+      watchFor: generateWatchFor(disease),
+      whenToCallVet: generateWhenToCallVet(disease),
+    };
+  });
+
+  // Sort descending by score
+  const ranked = scored.sort((a, b) => b.score - a.score);
+
+  // If no conditions scored, provide a safe top match
+  const topMatch = ranked[0]?.score > 0 ? ranked[0] : {
+    ...ranked[0],
+    confidence: 45,
+    evidence: ['General flock observation required. Complete triage questions to narrow down.'],
+  };
+
+  const secondaryMatches = ranked
+    .slice(1, 4)
+    .filter((m) => m.score > 20 && m.id !== topMatch.id);
 
   return {
     primarySymptom: PRIMARY_SYMPTOM_CATEGORIES.find((c) => c.id === primarySymptomId) || null,
     answers,
     topMatch,
     secondaryMatches,
+    allRanked: ranked.slice(0, 8),
     timestamp: new Date().toISOString(),
+    totalDiseasesEvaluated: diseases.length,
   };
 }
