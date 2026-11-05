@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useFarm } from '../../context/FarmContext';
+import { COBB_STANDARDS, getCobbStandard, flockDailyFeedKg } from '../../data/cobbStandards';
 import {
   Calendar,
   CheckCircle2,
@@ -15,6 +16,8 @@ import {
   Thermometer,
   Trash2,
   Wheat,
+  AlertTriangle,
+  TrendingUp,
 } from 'lucide-react';
 
 const AGE_PROTOCOLS = [
@@ -86,12 +89,58 @@ const AGE_PROTOCOLS = [
   },
 ];
 
+/** Determine feed phase/type from day */
+function getFeedPhase(day) {
+  if (day <= 7)  return { type: 'Pre-Starter / Starter Crumble', cp: '22–24% CP', color: '#C9A45C' };
+  if (day <= 21) return { type: 'Starter Crumble', cp: '22–23% CP', color: '#8A877F' };
+  if (day <= 28) return { type: 'Grower Pellets', cp: '19–21% CP', color: '#30352B' };
+  return { type: 'Finisher Pellets', cp: '17–19% CP', color: '#252522' };
+}
+
+/** Build week summary rows */
+const WEEK_SUMMARY = [
+  { label: 'Week 1', days: [1, 7],   feedType: 'Pre-Starter / Starter Crumble', cp: '22–24% CP', note: 'Crumble. Paper floor feeding for Day 1–3.' },
+  { label: 'Week 2', days: [8, 14],  feedType: 'Starter Crumble',               cp: '22–23% CP', note: 'Transition to 50% Grower on Day 13–14.' },
+  { label: 'Week 3', days: [15, 21], feedType: 'Grower Pellets',                 cp: '19–21% CP', note: 'Full Grower by Day 15. Ad libitum feeding.' },
+  { label: 'Week 4', days: [22, 28], feedType: 'Grower Pellets',                 cp: '19–21% CP', note: 'Peak growth phase — never restrict feed.' },
+  { label: 'Week 5', days: [29, 35], feedType: 'Finisher Pellets',               cp: '17–19% CP', note: 'Start drug withdrawal by Day 29.' },
+  { label: 'Week 6', days: [36, 42], feedType: 'Finisher Pellets',               cp: '17–19% CP', note: 'Withdraw feed 6–8 hrs before slaughter.' },
+];
+
+function getDailyFeedForWeek(startDay, endDay) {
+  const slice = COBB_STANDARDS.filter(r => r.day >= startDay && r.day <= endDay);
+  if (!slice.length) return { perBirdMin: 0, perBirdMax: 0 };
+  const vals = slice.map(r => r.feedPerBird);
+  return { perBirdMin: Math.min(...vals), perBirdMax: Math.max(...vals) };
+}
+
 const ProtocolPainkillerView = ({ onOpenAddModal }) => {
   const { farmData, toggleHealthStatus, deleteHealth, loadStandardVaccinationSchedule, cleanHealthDuplicates } = useFarm();
   const { health, batch } = farmData;
-  const [activeTab, setActiveTab] = useState('daily_protocol'); // 'daily_protocol' | 'medical_log'
+  const [activeTab, setActiveTab] = useState('daily_protocol'); // 'daily_protocol' | 'feed_schedule' | 'medical_log'
 
-  // Deduplicate items so ghost duplicates are never rendered
+  // ── Current flock age ──
+  const flockDayAge = useMemo(() => {
+    if (!batch?.placementDate) return null;
+    const placed = new Date(batch.placementDate);
+    const today = new Date();
+    const diff = Math.floor((today - placed) / (1000 * 60 * 60 * 24)) + 1;
+    return diff >= 1 && diff <= 42 ? diff : null;
+  }, [batch?.placementDate]);
+
+  const liveBirds = useMemo(() => {
+    return batch?.birds
+      ? batch.birds - (farmData.deaths?.reduce((s, d) => s + (Number(d.count) || 0), 0) || 0)
+      : null;
+  }, [batch, farmData.deaths]);
+
+  // Today's Cobb standard
+  const todayStd = flockDayAge ? getCobbStandard(flockDayAge) : null;
+  const todayFlockFeedKg = todayStd && liveBirds
+    ? flockDailyFeedKg(todayStd.feedPerBird, liveBirds)
+    : null;
+
+  // Deduplicate health items
   const uniqueHealth = useMemo(() => {
     const seen = new Set();
     const clean = [];
@@ -99,15 +148,11 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
       const titleKey = (item.name || item.title || '').trim().toLowerCase();
       const dateKey = item.date || '';
       const key = `${titleKey}_${dateKey}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        clean.push(item);
-      }
+      if (!seen.has(key)) { seen.add(key); clean.push(item); }
     }
     return clean;
   }, [health]);
 
-  // If there were stored duplicates from past clicks, auto-clean them
   useEffect(() => {
     if (health.length > uniqueHealth.length && cleanHealthDuplicates) {
       cleanHealthDuplicates();
@@ -134,14 +179,21 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
             onClick={() => setActiveTab('daily_protocol')}
           >
             <ClipboardList size={15} />
-            <span>Age-Based Management</span>
+            <span>Management</span>
+          </button>
+          <button
+            className={`proto-switch-btn ${activeTab === 'feed_schedule' ? 'active' : ''}`}
+            onClick={() => setActiveTab('feed_schedule')}
+          >
+            <Wheat size={15} />
+            <span>Feed Schedule</span>
           </button>
           <button
             className={`proto-switch-btn ${activeTab === 'medical_log' ? 'active' : ''}`}
             onClick={() => setActiveTab('medical_log')}
           >
             <ShieldCheck size={15} />
-            <span>Vaccines &amp; Treatments ({uniqueHealth.length})</span>
+            <span>Vaccines ({uniqueHealth.length})</span>
           </button>
         </div>
       </div>
@@ -189,7 +241,132 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
       )}
 
       {/* ══════════════════════════════════════════════════════════════════
-          VIEW 2: VACCINATION & MEDICAL LOG
+          VIEW 2: FEED SCHEDULE (Cobb 500 Standards)
+         ══════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'feed_schedule' && (
+        <div className="proto-content">
+
+          {/* TODAY'S FEEDING TARGET HERO */}
+          {todayStd && todayFlockFeedKg !== null ? (
+            <div className="feed-today-card">
+              <div className="feed-today-top">
+                <div className="feed-today-tag">
+                  <Wheat size={12} />
+                  <span>TODAY — DAY {flockDayAge} FEEDING TARGET</span>
+                </div>
+                <span className="feed-today-phase-badge" style={{ background: getFeedPhase(flockDayAge).color }}>
+                  {getFeedPhase(flockDayAge).type}
+                </span>
+              </div>
+
+              <div className="feed-today-hero-row">
+                <div className="feed-today-stat">
+                  <span className="feed-today-val">{todayFlockFeedKg.toFixed(1)} kg</span>
+                  <span className="feed-today-label">Flock total today</span>
+                </div>
+                <div className="feed-today-divider" />
+                <div className="feed-today-stat">
+                  <span className="feed-today-val">{todayStd.feedPerBird} g</span>
+                  <span className="feed-today-label">Per bird today</span>
+                </div>
+                <div className="feed-today-divider" />
+                <div className="feed-today-stat">
+                  <span className="feed-today-val">{liveBirds?.toLocaleString()}</span>
+                  <span className="feed-today-label">Live birds</span>
+                </div>
+              </div>
+
+              <div className="feed-today-note">
+                <TrendingUp size={13} />
+                <span>Target weight by end of day: <strong>{todayStd.targetWeight.toLocaleString()} g/bird</strong> — {getFeedPhase(flockDayAge).cp}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="feed-no-data-card">
+              <Wheat size={28} />
+              <p>Set your batch placement date in the Flock tab to get today's personalised feeding target.</p>
+            </div>
+          )}
+
+          {/* COBB 500 FEED PHASE GUIDE */}
+          <div className="feed-section-label">COBB 500 WEEKLY FEED GUIDE</div>
+
+          <div className="feed-week-list">
+            {WEEK_SUMMARY.map((week, idx) => {
+              const { perBirdMin, perBirdMax } = getDailyFeedForWeek(week.days[0], week.days[1]);
+              const isCurrentWeek = flockDayAge >= week.days[0] && flockDayAge <= week.days[1];
+              return (
+                <div key={idx} className={`feed-week-card ${isCurrentWeek ? 'active' : ''}`}>
+                  <div className="feed-week-header">
+                    <div className="feed-week-left">
+                      {isCurrentWeek && <span className="feed-current-dot" />}
+                      <span className="feed-week-label">{week.label}</span>
+                      <span className="feed-week-days">Day {week.days[0]}–{week.days[1]}</span>
+                    </div>
+                    <span className="feed-week-range">{perBirdMin}–{perBirdMax} g/bird/day</span>
+                  </div>
+
+                  <div className="feed-week-type-row">
+                    <span className="feed-type-badge">{week.feedType}</span>
+                    <span className="feed-cp-badge">{week.cp}</span>
+                  </div>
+
+                  <p className="feed-week-note">{week.note}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* DAY-BY-DAY DETAIL TABLE */}
+          <div className="feed-section-label" style={{ marginTop: 28 }}>DAY-BY-DAY COBB 500 TARGETS</div>
+          <div className="feed-table-wrap">
+            <table className="feed-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Feed Type</th>
+                  <th>g / bird</th>
+                  {liveBirds && <th>Flock (kg)</th>}
+                  <th>Target Wt</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COBB_STANDARDS.map((row) => {
+                  const phase = getFeedPhase(row.day);
+                  const isToday = flockDayAge === row.day;
+                  const flockKg = liveBirds ? (row.feedPerBird * liveBirds / 1000).toFixed(1) : null;
+                  return (
+                    <tr key={row.day} className={isToday ? 'feed-row-today' : ''}>
+                      <td className="feed-td-day">
+                        {isToday && <span className="feed-today-marker">▶</span>}
+                        {row.day}
+                      </td>
+                      <td className="feed-td-type" style={{ color: phase.color }}>{phase.type.split(' / ')[0]}</td>
+                      <td className="feed-td-num">{row.feedPerBird}</td>
+                      {liveBirds && <td className="feed-td-num">{flockKg}</td>}
+                      <td className="feed-td-wt">{row.targetWeight.toLocaleString()} g</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Water guidance */}
+          <div className="feed-water-box">
+            <Droplet size={15} style={{ color: '#3B82F6', flexShrink: 0 }} />
+            <div>
+              <span className="feed-water-title">Water-to-Feed Ratio</span>
+              <p className="feed-water-body">
+                Birds drink <strong>1.6–2× more water than feed by weight</strong>. If feed intake drops, check water first — nipple pressure, cleanliness, and line height are the top culprits.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════
+          VIEW 3: VACCINATION & MEDICAL LOG
          ══════════════════════════════════════════════════════════════════ */}
       {activeTab === 'medical_log' && (
         <div className="proto-content">

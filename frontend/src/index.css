@@ -5661,3 +5661,329 @@ button {
   cursor: pointer;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   FEED SCHEDULE TAB
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Today's hero card ── */
+.feed-today-card {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+
+.feed-today-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.feed-today-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.feed-today-phase-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.feed-today-hero-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 14px;
+}
+
+.feed-today-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.feed-today-val {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.feed-today-label {
+  font-size: 0.68rem;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  text-align: center;
+}
+
+.feed-today-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border-hairline);
+  flex-shrink: 0;
+}
+
+.feed-today-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.feed-today-note strong {
+  color: var(--text-primary);
+}
+
+/* ── Empty / no batch state ── */
+.feed-no-data-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--text-tertiary);
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-hairline);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+}
+
+.feed-no-data-card p {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+/* ── Section label ── */
+.feed-section-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 10px;
+}
+
+/* ── Weekly feed cards ── */
+.feed-week-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.feed-week-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: border-color 0.15s;
+}
+
+.feed-week-card.active {
+  border-color: var(--gold-text);
+  background: var(--gold-subtle, rgba(201,164,92,0.06));
+}
+
+.feed-week-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.feed-week-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feed-current-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold-text);
+  flex-shrink: 0;
+}
+
+.feed-week-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.feed-week-days {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.feed-week-range {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.feed-week-type-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+
+.feed-type-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: 20px;
+  padding: 2px 9px;
+}
+
+.feed-cp-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.feed-week-note {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ── Day-by-day table ── */
+.feed-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-hairline);
+  margin-bottom: 20px;
+}
+
+.feed-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.feed-table thead th {
+  background: var(--bg-subtle);
+  color: var(--text-tertiary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-hairline);
+  white-space: nowrap;
+}
+
+.feed-table tbody tr {
+  border-bottom: 1px solid var(--border-hairline);
+  transition: background 0.1s;
+}
+
+.feed-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.feed-table tbody tr:hover {
+  background: var(--bg-subtle);
+}
+
+.feed-row-today {
+  background: var(--gold-subtle, rgba(201,164,92,0.07)) !important;
+}
+
+.feed-td-day {
+  padding: 8px 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  position: relative;
+  white-space: nowrap;
+}
+
+.feed-today-marker {
+  font-size: 0.6rem;
+  color: var(--gold-text);
+  margin-right: 4px;
+}
+
+.feed-td-type {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.feed-td-num {
+  padding: 8px 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.feed-td-wt {
+  padding: 8px 12px;
+  color: var(--text-secondary);
+  font-size: 0.77rem;
+  white-space: nowrap;
+}
+
+/* ── Water guidance ── */
+.feed-water-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+
+.feed-water-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.feed-water-body {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.feed-water-body strong {
+  color: var(--text-primary);
+}
+
+
