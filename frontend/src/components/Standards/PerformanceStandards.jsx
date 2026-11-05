@@ -22,10 +22,10 @@ const STATUS_LABELS = {
 };
 
 const FEED_TYPES = {
-  1:  'Starter',   // Day 1-10
+  1:  'Starter',  
   11: 'Starter',
-  15: 'Grower',    // Day 15-28 approx
-  29: 'Finisher',  // Day 29+
+  15: 'Grower',   
+  29: 'Finisher', 
 };
 
 function getFeedType(day) {

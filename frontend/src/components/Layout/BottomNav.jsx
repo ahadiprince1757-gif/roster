@@ -2,37 +2,34 @@ import React, { useState } from 'react';
 import { useFarm } from '../../context/FarmContext';
 import {
   LayoutDashboard,
+  Stethoscope,
   Scale,
-  Wheat,
-  Activity,
-  MoreHorizontal,
   Coins,
+  MoreHorizontal,
+  ClipboardList,
   Settings2,
-  HeartCrack,
   FileText,
-  Home,
   User,
   X,
   Sun,
   Moon,
+  Plus,
 } from 'lucide-react';
 
 const MAIN_NAV = [
-  { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
-  { id: 'weights', label: 'Weights', icon: Scale },
-  { id: 'feed', label: 'Feed', icon: Wheat },
-  { id: 'health', label: 'Health', icon: Activity },
+  { id: 'dashboard', label: 'Home',     icon: LayoutDashboard },
+  { id: 'diagnose',  label: 'Diagnose', icon: Stethoscope, isSpecial: true },
+  { id: 'flock',     label: 'Flock',    icon: Scale },
+  { id: 'finance',   label: 'Finance',  icon: Coins },
 ];
 
 const MORE_NAV = [
-  { id: 'mortality', label: 'Mortality Records', desc: 'Flock survivability & death logs', icon: HeartCrack },
-  { id: 'finance', label: 'Expenses & Sales', desc: 'Cashflow ledger & profit margins', icon: Coins },
-  { id: 'batch', label: 'Flock Settings', desc: 'Batch configuration & targets', icon: Settings2 },
-  { id: 'login', label: 'Farmer Account', desc: 'Google auth & farmer profile', icon: User },
-  { id: 'landing', label: 'Landing Page', desc: 'Product introduction showcase', icon: Home },
+  { id: 'records',   label: 'Protocol & Vaccines', icon: ClipboardList },
+  { id: 'batch',     label: 'Flock Settings',      icon: Settings2 },
+  { id: 'login',     label: 'Account Profile',     icon: User },
 ];
 
-const BottomNav = ({ onOpenReport }) => {
+const BottomNav = ({ onOpenReport, onOpenQuickLog }) => {
   const { activeTab, setActiveTab, theme, toggleTheme, currency, setCurrency } = useFarm();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
 
@@ -45,13 +42,13 @@ const BottomNav = ({ onOpenReport }) => {
 
   return (
     <>
-      {/* "More" Slide-up Sheet Backdrop */}
+      {/* Backdrop */}
       {moreMenuOpen && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0, 0, 0, 0.45)',
+            background: 'rgba(0,0,0,0.5)',
             backdropFilter: 'blur(8px)',
             zIndex: 60,
           }}
@@ -59,220 +56,103 @@ const BottomNav = ({ onOpenReport }) => {
         />
       )}
 
-      {/* "More" Slide-up Sheet */}
+      {/* More Sheet */}
       {moreMenuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            left: 0,
-            right: 0,
-            bottom: '64px',
-            background: 'var(--bg-surface)',
-            borderTop: '1px solid var(--border-hairline)',
-            borderTopLeftRadius: '22px',
-            borderTopRightRadius: '22px',
-            padding: '20px 18px 12px',
-            zIndex: 70,
-            boxShadow: '0 -10px 30px rgba(0, 0, 0, 0.15)',
-            animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '14px',
-              paddingBottom: '10px',
-              borderBottom: '1px solid var(--border-hairline)',
-            }}
-          >
-            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              More Operations
-            </span>
-            <button
-              onClick={() => setMoreMenuOpen(false)}
-              style={{ padding: '4px', color: 'var(--text-tertiary)' }}
-            >
-              <X size={18} />
-            </button>
-          </div>
+        <div className="more-sheet">
+          <div className="more-sheet-handle" />
 
-          {/* Quick Settings: Theme & Currency */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 14px',
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--bg-subtle)',
-              border: '1px solid var(--border-hairline)',
-              marginBottom: '10px',
-            }}
-          >
+          {/* Quick actions row */}
+          <div className="more-sheet-quick">
             <button
-              onClick={toggleTheme}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-primary)',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                cursor: 'pointer',
+              className="more-sheet-quick-btn"
+              onClick={() => {
+                setMoreMenuOpen(false);
+                onOpenQuickLog?.();
               }}
             >
+              <Plus size={16} />
+              <span>Log Entry</span>
+            </button>
+            <button
+              className="more-sheet-quick-btn"
+              onClick={() => {
+                setMoreMenuOpen(false);
+                onOpenReport?.();
+              }}
+            >
+              <FileText size={16} />
+              <span>Flock Report</span>
+            </button>
+            <button className="more-sheet-quick-btn" onClick={toggleTheme}>
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
               <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
-
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 600 }}>CURRENCY</span>
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                style={{
-                  background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-hairline)',
-                  borderRadius: '6px',
-                  padding: '4px 8px',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  color: 'var(--text-primary)',
-                  cursor: 'pointer',
-                  outline: 'none',
-                }}
-              >
-                <option value="KSh">KSh (Kenya)</option>
-                <option value="$">USD ($)</option>
-                <option value="€">EUR (€)</option>
-                <option value="£">GBP (£)</option>
-                <option value="₦">NGN (₦)</option>
-                <option value="R">ZAR (R)</option>
-              </select>
-            </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {/* Nav items */}
+          <div className="more-sheet-nav">
             {MORE_NAV.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
+                  className={`more-sheet-item ${isActive ? 'active' : ''}`}
                   onClick={() => handleTabClick(item.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '14px',
-                    padding: '12px 14px',
-                    borderRadius: 'var(--radius-md)',
-                    background: isActive ? 'var(--bg-subtle)' : 'transparent',
-                    color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    textAlign: 'left',
-                    transition: 'all 0.15s ease',
-                  }}
                 >
-                  <div
-                    style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '10px',
-                      background: isActive ? 'var(--text-primary)' : 'var(--bg-subtle)',
-                      color: isActive ? 'var(--bg-surface)' : 'var(--text-secondary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Icon size={18} />
-                  </div>
-                  <div>
-                    <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>
-                      {item.label}
-                    </strong>
-                    <small style={{ fontSize: '0.74rem', color: 'var(--text-tertiary)' }}>
-                      {item.desc}
-                    </small>
-                  </div>
+                  <Icon size={18} />
+                  <span>{item.label}</span>
                 </button>
               );
             })}
-
-            {/* Flock Report Option */}
-            <button
-              onClick={() => {
-                setMoreMenuOpen(false);
-                onOpenReport();
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '12px 14px',
-                borderRadius: 'var(--radius-md)',
-                background: 'transparent',
-                textAlign: 'left',
-                borderTop: '1px solid var(--border-hairline)',
-                marginTop: '4px',
-              }}
-            >
-              <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '10px',
-                  background: 'var(--accent-subtle)',
-                  color: 'var(--accent)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <FileText size={18} />
-              </div>
-              <div>
-                <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>
-                  Print Performance Report
-                </strong>
-                <small style={{ fontSize: '0.74rem', color: 'var(--text-tertiary)' }}>
-                  Audit certificate & summary
-                </small>
-              </div>
-            </button>
           </div>
+
+          {/* Currency Switcher */}
+          <div className="more-sheet-footer">
+            <span className="more-sheet-footer-label">Farm Currency</span>
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="more-sheet-currency"
+            >
+              <option value="KSh">KSh (Kenya)</option>
+              <option value="$">USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="£">GBP (£)</option>
+              <option value="₦">NGN (Nigeria)</option>
+              <option value="R">ZAR (South Africa)</option>
+            </select>
+          </div>
+
+          <button className="more-sheet-close" onClick={() => setMoreMenuOpen(false)}>
+            <X size={16} />
+          </button>
         </div>
       )}
 
       {/* Fixed Bottom Tab Bar */}
-      <nav className="min-bottom-nav">
+      <nav className="bottom-bar">
         {MAIN_NAV.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
-              className={`min-bottom-nav-item ${isActive ? 'active' : ''}`}
+              className={`bottom-bar-item ${isActive ? 'active' : ''} ${item.isSpecial ? 'diag-pill-tab' : ''}`}
               onClick={() => handleTabClick(item.id)}
             >
-              <Icon size={20} strokeWidth={isActive ? 2.3 : 1.8} />
-              <span>{item.label}</span>
+              <Icon size={20} strokeWidth={isActive ? 2.2 : 1.7} />
+              <span className="bottom-bar-label">{item.label}</span>
             </button>
           );
         })}
 
-        {/* More Tab */}
         <button
-          className={`min-bottom-nav-item ${isMoreActive || moreMenuOpen ? 'active' : ''}`}
+          className={`bottom-bar-item ${isMoreActive || moreMenuOpen ? 'active' : ''}`}
           onClick={() => setMoreMenuOpen(!moreMenuOpen)}
         >
-          <MoreHorizontal size={20} strokeWidth={isMoreActive || moreMenuOpen ? 2.3 : 1.8} />
-          <span>More</span>
+          <MoreHorizontal size={20} strokeWidth={isMoreActive || moreMenuOpen ? 2.2 : 1.7} />
+          <span className="bottom-bar-label">More</span>
         </button>
       </nav>
     </>

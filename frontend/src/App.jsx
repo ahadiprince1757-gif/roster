@@ -3,15 +3,18 @@ import { useFarm } from './context/FarmContext';
 import MinimalNav from './components/Layout/MinimalNav';
 import BottomNav from './components/Layout/BottomNav';
 import LandingPage from './components/Landing/LandingPage';
-import DashboardView from './components/Dashboard/DashboardView';
-import WeightsView from './components/Weights/WeightsView';
-import FeedView from './components/Feed/FeedView';
-import HealthView from './components/Health/HealthView';
-import MortalityView from './components/Mortality/MortalityView';
-import FinanceView from './components/Finance/FinanceView';
+import LoginPage from './components/Auth/LoginPage';
+
+// The 5 Painkiller Destinations
+import HomePainkillerView from './components/Dashboard/HomePainkillerView';
+import DiagnoseView from './components/Diagnose/DiagnoseView';
+import FlockPainkillerView from './components/Flock/FlockPainkillerView';
+import FinancePainkillerView from './components/Finance/FinancePainkillerView';
+import ProtocolPainkillerView from './components/Protocol/ProtocolPainkillerView';
+
+// Secondary Views
 import BatchView from './components/Batch/BatchView';
 import PerformanceStandards from './components/Standards/PerformanceStandards';
-import LoginPage from './components/Auth/LoginPage';
 
 // Modals
 import AddWeightModal from './components/Modals/AddWeightModal';
@@ -35,14 +38,14 @@ function App() {
     setActiveModal(null);
   };
 
-  // If on Landing Page, display full Steve Jobs keynote style presentation
+  // If on Landing Page, display presentation
   if (activeTab === 'landing') {
     return (
       <LandingPage onEnterApp={(tab = 'dashboard') => setActiveTab(tab)} />
     );
   }
 
-  // If on Login Page, display dedicated minimalist authentication screen
+  // If on Login Page, display authentication screen
   if (activeTab === 'login') {
     return (
       <LoginPage
@@ -54,7 +57,7 @@ function App() {
 
   return (
     <div className="min-app">
-      {/* Clean Apple-style Navigation Bar */}
+      {/* Quiet Luxury Navigation Bar */}
       <MinimalNav
         onOpenQuickLog={() => setActiveModal('quick')}
         onOpenReport={() => setActiveModal('report')}
@@ -62,36 +65,46 @@ function App() {
 
       {/* Main Focus Canvas */}
       <main className="min-content">
+        {/* Destination 1: Home (Flock Status & Urgent Radar) */}
         {activeTab === 'dashboard' && (
-          <DashboardView
+          <HomePainkillerView
             onOpenModal={handleOpenModal}
             onNavigate={(tab) => setActiveTab(tab)}
           />
         )}
 
-        {activeTab === 'weights' && (
-          <WeightsView onOpenAddModal={() => handleOpenModal('weight')} />
+        {/* Destination 2: Diagnose (Poultry Doctor / Triage Engine) */}
+        {activeTab === 'diagnose' && (
+          <DiagnoseView
+            onNavigate={(tab) => setActiveTab(tab)}
+            onSaveToRecords={() => setActiveTab('records')}
+          />
         )}
 
-        {activeTab === 'feed' && (
-          <FeedView onOpenAddModal={() => handleOpenModal('feed')} />
+        {/* Destination 3: Flock (Growth, Benchmark & Gap Solver) */}
+        {(activeTab === 'flock' || activeTab === 'weights' || activeTab === 'feed' || activeTab === 'mortality') && (
+          <FlockPainkillerView
+            onOpenAddModal={handleOpenModal}
+            onNavigate={(tab) => setActiveTab(tab)}
+          />
         )}
 
-        {activeTab === 'health' && (
-          <HealthView onOpenAddModal={() => handleOpenModal('health')} />
-        )}
-
-        {activeTab === 'mortality' && (
-          <MortalityView onOpenAddModal={() => handleOpenModal('mortality')} />
-        )}
-
+        {/* Destination 4: Finance (Real-Time Economics & Profit Leaks) */}
         {activeTab === 'finance' && (
-          <FinanceView
+          <FinancePainkillerView
             onOpenExpenseModal={() => handleOpenModal('expense')}
             onOpenSaleModal={() => handleOpenModal('sale')}
           />
         )}
 
+        {/* Destination 5: Records / Protocol (Day-by-Day Sequence & Vaccines) */}
+        {(activeTab === 'records' || activeTab === 'health') && (
+          <ProtocolPainkillerView
+            onOpenAddModal={() => handleOpenModal('health')}
+          />
+        )}
+
+        {/* Auxiliary Views */}
         {activeTab === 'standards' && (
           <PerformanceStandards />
         )}
@@ -102,7 +115,10 @@ function App() {
       </main>
 
       {/* iOS Style Mobile Bottom Navigation */}
-      <BottomNav onOpenReport={() => setActiveModal('report')} />
+      <BottomNav
+        onOpenReport={() => setActiveModal('report')}
+        onOpenQuickLog={() => setActiveModal('quick')}
+      />
 
       {/* Modals */}
       <AddWeightModal
