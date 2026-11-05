@@ -4565,7 +4565,40 @@ button {
    ========================================================================== */
 
 /* ── Container ── */
-.fin-clean-wrap,
+.fin-executive-wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 16px 18px 90px;
+}
+
+@media (min-width: 900px) {
+  .fin-executive-wrap {
+    padding: 28px 24px 60px;
+  }
+}
+
+.fin-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .fin-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 32px;
+    align-items: start;
+  }
+}
+
+.fin-col-primary,
+.fin-col-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .home-clean-wrap,
 .flock-clean-wrap {
   max-width: 680px;
@@ -4577,24 +4610,46 @@ button {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   FINANCE DECLUTTERED
+   FINANCE EXECUTIVE DASHBOARD
    ══════════════════════════════════════════════════════════════════ */
-.fin-hero-minimal {
-  padding: 10px 4px 6px;
+.fin-hero-box {
+  padding: 6px 4px 0;
   text-align: left;
 }
 
+.fin-hero-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
 .fin-meta-tag {
-  display: block;
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   color: var(--text-tertiary);
-  margin-bottom: 6px;
+}
+
+.fin-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.fin-badge.profit {
+  background: rgba(46, 94, 58, 0.1);
+  color: #2E5E3A;
+}
+
+.fin-badge.loss {
+  background: rgba(186, 60, 56, 0.1);
+  color: var(--accent-red);
 }
 
 .fin-hero-number {
-  font-size: 3.2rem;
+  font-size: 3.4rem;
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -4617,12 +4672,94 @@ button {
 }
 
 .fin-pill {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 9999px;
+}
+
+/* ── Interactive Market Price Negotiator ── */
+.fin-sim-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+
+.fin-sim-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.fin-sim-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fin-sim-icon {
+  color: var(--gold-text);
+}
+
+.fin-sim-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.fin-sim-price-tag {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.fin-sim-slider-row {
+  margin-bottom: 10px;
+}
+
+.fin-price-range {
+  width: 100%;
+  accent-color: var(--gold-text);
+  cursor: pointer;
+  height: 6px;
+  border-radius: 9999px;
+}
+
+.fin-sim-presets {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fin-sim-hint {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  margin-right: 4px;
+}
+
+.fin-preset-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.fin-preset-btn:hover,
+.fin-preset-btn.active {
+  background: var(--text-primary);
+  color: var(--bg-app);
+  border-color: var(--text-primary);
 }
 
 /* 3 Clean Stats */
@@ -4649,7 +4786,7 @@ button {
 }
 
 .fin-stat-val {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
@@ -4659,17 +4796,17 @@ button {
 .fin-actions-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .fin-action-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 12px;
+  gap: 8px;
+  padding: 14px;
   border-radius: var(--radius-sm);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s;
@@ -4687,19 +4824,84 @@ button {
   border: 1px solid var(--border-hairline);
 }
 
-/* Preventable Leaks Section */
-.fin-leaks-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ── Capital Allocation Bar ── */
+.fin-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
 }
 
-.fin-section-title-row {
+.fin-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 14px;
 }
 
+.fin-card-total {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.fin-alloc-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: var(--bg-subtle);
+  margin-bottom: 14px;
+}
+
+.fin-alloc-segment.feed {
+  background: #30352B;
+}
+
+.fin-alloc-segment.chicks {
+  background: #C9A45C;
+}
+
+.fin-alloc-segment.other {
+  background: #8A877F;
+}
+
+.fin-alloc-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fin-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.fin-legend-item .fin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+.fin-dot.feed { background: #30352B; }
+.fin-dot.chicks { background: #C9A45C; }
+.fin-dot.other { background: #8A877F; }
+
+.fin-legend-name {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.fin-legend-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Preventable Leaks Section */
 .fin-section-title {
   font-size: 0.7rem;
   font-weight: 800;
@@ -4716,17 +4918,16 @@ button {
 .fin-clean-list {
   display: flex;
   flex-direction: column;
-  background: var(--bg-surface);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
   overflow: hidden;
+  border-top: 1px solid var(--border-hairline);
 }
 
 .fin-leak-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 14px 0;
   cursor: pointer;
   transition: background 0.15s;
   border-bottom: 1px solid var(--border-hairline);
@@ -4734,10 +4935,6 @@ button {
 
 .fin-leak-row:last-child {
   border-bottom: none;
-}
-
-.fin-leak-row:hover {
-  background: var(--bg-subtle);
 }
 
 .fin-leak-left {
@@ -4805,26 +5002,34 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 16px 18px;
   background: var(--bg-surface);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-hairline);
 }
 
 .fin-harvest-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .fin-harvest-icon {
   color: var(--gold-text);
+  flex-shrink: 0;
 }
 
 .fin-harvest-label {
-  font-size: 0.82rem;
-  font-weight: 600;
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--text-primary);
+}
+
+.fin-harvest-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
 }
 
 .fin-harvest-badge {
@@ -4832,8 +5037,9 @@ button {
   font-weight: 800;
   color: var(--gold-text);
   background: var(--gold-subtle);
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 6px;
+  flex-shrink: 0;
 }
 
 /* Modal Drawer for Leak Details */

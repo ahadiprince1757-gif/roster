@@ -25,11 +25,14 @@ export const formatNumber = (num, decimals = 1) => {
   });
 };
 
-export const formatCurrency = (num, currency = 'KSh') => {
+export const formatCurrency = (num, currency = 'KSh', forceDecimals = false) => {
   const val = Number(num);
   if (isNaN(val)) return `${currency} 0`;
+  const isZeroDecimal = currency === 'KSh' || currency === '₦' || currency === 'R' || currency === 'UGX' || currency === 'TZS';
+  const decimals = forceDecimals ? 2 : isZeroDecimal ? 0 : 2;
   return `${currency} ${val.toLocaleString('en-US', {
-    maximumFractionDigits: 2,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   })}`;
 };
 
