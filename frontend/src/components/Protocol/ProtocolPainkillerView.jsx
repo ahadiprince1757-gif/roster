@@ -246,51 +246,8 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
       {activeTab === 'feed_schedule' && (
         <div className="proto-content">
 
-          {/* TODAY'S FEEDING TARGET HERO */}
-          {todayStd && todayFlockFeedKg !== null ? (
-            <div className="feed-today-card">
-              <div className="feed-today-top">
-                <div className="feed-today-tag">
-                  <Wheat size={12} />
-                  <span>TODAY — DAY {flockDayAge} FEEDING TARGET</span>
-                </div>
-                <span className="feed-today-phase-badge" style={{ background: getFeedPhase(flockDayAge).color }}>
-                  {getFeedPhase(flockDayAge).type}
-                </span>
-              </div>
-
-              <div className="feed-today-hero-row">
-                <div className="feed-today-stat">
-                  <span className="feed-today-val">{todayFlockFeedKg.toFixed(1)} kg</span>
-                  <span className="feed-today-label">Flock total today</span>
-                </div>
-                <div className="feed-today-divider" />
-                <div className="feed-today-stat">
-                  <span className="feed-today-val">{todayStd.feedPerBird} g</span>
-                  <span className="feed-today-label">Per bird today</span>
-                </div>
-                <div className="feed-today-divider" />
-                <div className="feed-today-stat">
-                  <span className="feed-today-val">{liveBirds?.toLocaleString()}</span>
-                  <span className="feed-today-label">Live birds</span>
-                </div>
-              </div>
-
-              <div className="feed-today-note">
-                <TrendingUp size={13} />
-                <span>Target weight by end of day: <strong>{todayStd.targetWeight.toLocaleString()} g/bird</strong> — {getFeedPhase(flockDayAge).cp}</span>
-              </div>
-            </div>
-          ) : (
-            <div className="feed-no-data-card">
-              <Wheat size={28} />
-              <p>Set your batch placement date in the Flock tab to get today's personalised feeding target.</p>
-            </div>
-          )}
-
-          {/* COBB 500 FEED PHASE GUIDE */}
+          {/* ── WEEKLY FEED GUIDE — top of page ── */}
           <div className="feed-section-label">COBB 500 WEEKLY FEED GUIDE</div>
-
           <div className="feed-week-list">
             {WEEK_SUMMARY.map((week, idx) => {
               const { perBirdMin, perBirdMax } = getDailyFeedForWeek(week.days[0], week.days[1]);
@@ -305,20 +262,34 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
                     </div>
                     <span className="feed-week-range">{perBirdMin}–{perBirdMax} g/bird/day</span>
                   </div>
-
                   <div className="feed-week-type-row">
                     <span className="feed-type-badge">{week.feedType}</span>
                     <span className="feed-cp-badge">{week.cp}</span>
                   </div>
-
                   <p className="feed-week-note">{week.note}</p>
                 </div>
               );
             })}
           </div>
 
-          {/* DAY-BY-DAY DETAIL TABLE */}
-          <div className="feed-section-label" style={{ marginTop: 28 }}>DAY-BY-DAY COBB 500 TARGETS</div>
+          {/* ── TODAY'S COMPACT TARGET STRIP ── */}
+          {todayStd && todayFlockFeedKg !== null && (
+            <div className="feed-today-strip">
+              <div className="feed-today-strip-left">
+                <Wheat size={13} style={{ color: 'var(--gold-text)', flexShrink: 0 }} />
+                <span className="feed-today-strip-label">Today · Day {flockDayAge}</span>
+                <span className="feed-today-strip-type">{getFeedPhase(flockDayAge).type}</span>
+              </div>
+              <div className="feed-today-strip-right">
+                <span className="feed-today-strip-val">{todayStd.feedPerBird} g/bird</span>
+                <span className="feed-today-strip-sep">·</span>
+                <span className="feed-today-strip-val">{todayFlockFeedKg.toFixed(1)} kg flock</span>
+              </div>
+            </div>
+          )}
+
+          {/* ── DAY-BY-DAY TABLE ── */}
+          <div className="feed-section-label" style={{ marginTop: 24 }}>DAY-BY-DAY COBB 500 TARGETS</div>
           <div className="feed-table-wrap">
             <table className="feed-table">
               <thead>
@@ -352,20 +323,23 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
             </table>
           </div>
 
-          {/* Water guidance */}
+          {/* ── Water note ── */}
           <div className="feed-water-box">
             <Droplet size={15} style={{ color: '#3B82F6', flexShrink: 0 }} />
             <div>
               <span className="feed-water-title">Water-to-Feed Ratio</span>
               <p className="feed-water-body">
-                Birds drink <strong>1.6–2× more water than feed by weight</strong>. If feed intake drops, check water first — nipple pressure, cleanliness, and line height are the top culprits.
+                Birds drink <strong>1.6–2× more water than feed</strong>. If feed intake drops, check water first — nipple pressure, cleanliness, and line height are the top culprits.
               </p>
             </div>
           </div>
+
         </div>
       )}
 
+
       {/* ══════════════════════════════════════════════════════════════════
+
           VIEW 3: VACCINATION & MEDICAL LOG
          ══════════════════════════════════════════════════════════════════ */}
       {activeTab === 'medical_log' && (
