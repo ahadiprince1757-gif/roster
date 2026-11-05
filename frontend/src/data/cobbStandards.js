@@ -61,7 +61,9 @@ const COBB_MAP = Object.fromEntries(COBB_STANDARDS.map((r) => [r.day, r]));
  * Returns null if day is out of range (< 1 or > 42).
  */
 export function getCobbStandard(day) {
-  return COBB_MAP[day] ?? null;
+  const r = COBB_MAP[day];
+  if (!r) return null;
+  return { ...r, weight: r.targetWeight };
 }
 
 /**

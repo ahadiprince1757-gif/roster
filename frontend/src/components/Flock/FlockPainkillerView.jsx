@@ -21,17 +21,15 @@ const FlockPainkillerView = ({ onOpenAddModal, onNavigate }) => {
   const [expandedCulprit, setExpandedCulprit] = useState(null);
 
   const currentDay = Math.min(42, Math.max(1, metrics.currentFlockAge || 1));
-  const standardPoint = getCobbStandard(currentDay) || {
-    weight: Math.round(42 + currentDay * 55),
-    dailyGain: 55,
-    cumulativeFeed: Math.round(currentDay * 80),
-  };
+  const standardPoint = getCobbStandard(currentDay);
+  const targetWeightG = Number(standardPoint?.targetWeight || standardPoint?.weight || Math.round(42 + currentDay * 55));
 
-  const actualWeightG = metrics.latestAvgWeightGrams || 0;
-  const targetWeightG = standardPoint.weight;
-  const weightDiff = actualWeightG - targetWeightG;
+  const actualWeightG = Number(metrics.latestAvgWeightGrams || 0);
+  const weightDiff = actualWeightG > 0 ? actualWeightG - targetWeightG : 0;
   const isBehind = weightDiff < -40 && actualWeightG > 0;
-  const percentDiff = targetWeightG > 0 ? ((weightDiff / targetWeightG) * 100).toFixed(1) : 0;
+  const percentDiff = targetWeightG > 0 && actualWeightG > 0
+    ? Math.abs((weightDiff / targetWeightG) * 100).toFixed(1)
+    : '0';
 
   const ROOT_CULPRITS = [
     {
