@@ -4499,9 +4499,39 @@ button {
   color: var(--text-tertiary);
 }
 
+.proto-empty-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-hairline);
+  transition: border-color 0.15s;
+}
+
+.proto-log-check:hover .proto-empty-circle {
+  border-color: var(--text-primary);
+}
+
+.proto-log-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+.proto-log-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
 .proto-log-desc {
   font-size: 0.78rem;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   margin: 0;
 }
 

@@ -387,7 +387,15 @@ export const FarmProvider = ({ children }) => {
       };
     });
 
-    setFarmData((prev) => ({ ...prev, health: [...prev.health, ...newActivities] }));
+    setFarmData((prev) => {
+      const existingNames = new Set(prev.health.map((h) => (h.name || h.title || '').trim().toLowerCase()));
+      const toAdd = newActivities.filter((a) => !existingNames.has(a.name.trim().toLowerCase()));
+      if (toAdd.length === 0) {
+        alert('Standard protocols are already scheduled.');
+        return prev;
+      }
+      return { ...prev, health: [...prev.health, ...toAdd] };
+    });
 
     if (activeBatchId) {
       const records = newActivities.map((a) => ({
@@ -402,6 +410,21 @@ export const FarmProvider = ({ children }) => {
       await api.bulkAddHealthEvents(records);
     }
   }, [farmData.batch.date, activeBatchId]);
+
+  const cleanHealthDuplicates = useCallback(() => {
+    setFarmData((prev) => {
+      const seen = new Set();
+      const cleanList = [];
+      for (const item of prev.health) {
+        const key = `${(item.name || item.title || '').trim().toLowerCase()}_${item.date}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          cleanList.push(item);
+        }
+      }
+      return { ...prev, health: cleanList };
+    });
+  }, []);
 
   const resetAllData = () => {
     if (window.confirm('Are you sure you want to reset and start a fresh empty flock?')) {
@@ -462,6 +485,7 @@ export const FarmProvider = ({ children }) => {
         addSale,
         deleteFinance,
         loadStandardVaccinationSchedule,
+        cleanHealthDuplicates,
         resetAllData,
         loadDemoData,
       }}

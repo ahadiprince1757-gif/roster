@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useFarm } from '../../context/FarmContext';
-import { RECOMMENDED_PROTOCOLS } from '../../data/standardVaccines';
 import {
   Calendar,
   CheckCircle2,
@@ -36,7 +35,7 @@ const AGE_PROTOCOLS = [
     temp: '30°C',
     feed: 'Starter Crumble',
     tasks: [
-      'Administer Gumboro (IBD) 1st dose via chlorine-free drinking water with skimmed milk stabilizer.',
+      'Administer Gumboro (IBD 1st dose) via chlorine-free drinking water with skimmed milk stabilizer.',
       'Sample weigh 20 chicks: 7-day weight should be 4x–5x placement weight (~180g).',
       'Expand brooder ring to give growing chicks double the space.',
     ],
@@ -88,11 +87,32 @@ const AGE_PROTOCOLS = [
 ];
 
 const ProtocolPainkillerView = ({ onOpenAddModal }) => {
-  const { farmData, toggleHealthStatus, deleteHealth, loadStandardVaccinationSchedule } = useFarm();
+  const { farmData, toggleHealthStatus, deleteHealth, loadStandardVaccinationSchedule, cleanHealthDuplicates } = useFarm();
   const { health, batch } = farmData;
   const [activeTab, setActiveTab] = useState('daily_protocol'); // 'daily_protocol' | 'medical_log'
 
-  const currentAge = batch?.targetAge ? Math.min(42, Math.max(1, batch.targetAge)) : 14;
+  // Deduplicate items so ghost duplicates are never rendered
+  const uniqueHealth = useMemo(() => {
+    const seen = new Set();
+    const clean = [];
+    for (const item of health) {
+      const titleKey = (item.name || item.title || '').trim().toLowerCase();
+      const dateKey = item.date || '';
+      const key = `${titleKey}_${dateKey}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        clean.push(item);
+      }
+    }
+    return clean;
+  }, [health]);
+
+  // If there were stored duplicates from past clicks, auto-clean them
+  useEffect(() => {
+    if (health.length > uniqueHealth.length && cleanHealthDuplicates) {
+      cleanHealthDuplicates();
+    }
+  }, [health.length, uniqueHealth.length, cleanHealthDuplicates]);
 
   return (
     <div className="proto-pain-wrap">
@@ -121,7 +141,7 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
             onClick={() => setActiveTab('medical_log')}
           >
             <ShieldCheck size={15} />
-            <span>Vaccines &amp; Treatments ({health.length})</span>
+            <span>Vaccines &amp; Treatments ({uniqueHealth.length})</span>
           </button>
         </div>
       </div>
@@ -184,7 +204,7 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
             </button>
           </div>
 
-          {health.length === 0 ? (
+          {uniqueHealth.length === 0 ? (
             <div className="proto-empty-card">
               <ShieldCheck size={36} />
               <h4>No Vaccination Records Yet</h4>
@@ -195,8 +215,12 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
             </div>
           ) : (
             <div className="proto-log-list">
-              {health.map((item) => {
+              {uniqueHealth.map((item) => {
                 const isCompleted = item.status === 'Completed';
+                const itemTitle = item.name || item.title || 'Vaccine / Health Protocol';
+                const itemNotes = item.notes || item.description || '';
+                const itemMethod = item.method || item.type || '';
+
                 return (
                   <div key={item.id} className={`proto-log-item ${isCompleted ? 'done' : ''}`}>
                     <div
@@ -204,15 +228,25 @@ const ProtocolPainkillerView = ({ onOpenAddModal }) => {
                       onClick={() => toggleHealthStatus(item.id)}
                       title="Toggle completion"
                     >
-                      {isCompleted && <CheckCircle2 size={18} />}
+                      {isCompleted ? <CheckCircle2 size={20} /> : <div className="proto-empty-circle" />}
                     </div>
+
                     <div className="proto-log-info">
                       <div className="proto-log-title-row">
-                        <span className="proto-log-title">{item.title}</span>
+                        <span className="proto-log-title">{itemTitle}</span>
                         <span className="proto-log-date">{item.date}</span>
                       </div>
-                      <p className="proto-log-desc">{item.description}</p>
+
+                      <div className="proto-log-meta-row">
+                        {itemMethod && (
+                          <span className="proto-log-badge">{itemMethod}</span>
+                        )}
+                        {itemNotes && (
+                          <span className="proto-log-desc">{itemNotes}</span>
+                        )}
+                      </div>
                     </div>
+
                     <button
                       className="proto-log-del"
                       onClick={() => deleteHealth(item.id)}
