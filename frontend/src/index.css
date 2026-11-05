@@ -389,6 +389,8 @@ button {
   margin: 0 auto;
   padding: 32px var(--container-padding) 80px;
   flex: 1;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* Flock Status Line */
@@ -3670,19 +3672,24 @@ button {
 
 /* ── Minimalist Mobile-First Diagnostic Styling ── */
 .diag-clean-wrap {
+  width: 100%;
   max-width: 680px;
   margin: 0 auto;
-  padding: 12px 14px 90px;
+  padding: 0 0 90px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 @media (min-width: 640px) {
   .diag-clean-wrap {
-    padding: 20px 18px 80px;
+    padding: 8px 0 80px;
   }
 }
 
 .diag-min-head {
   margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-meta-row {
@@ -3690,7 +3697,9 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-eyebrow {
@@ -3712,6 +3721,8 @@ button {
   background: rgba(46, 94, 58, 0.08);
   color: #2E5E3A;
   border: 1px solid rgba(46, 94, 58, 0.2);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .diag-min-dot {
@@ -3728,6 +3739,7 @@ button {
   color: var(--text-primary);
   margin: 0 0 10px;
   line-height: 1.2;
+  word-break: break-word;
 }
 
 @media (min-width: 640px) {
@@ -3737,7 +3749,7 @@ button {
 }
 
 .diag-min-seg {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 3px;
   background: var(--bg-subtle);
@@ -3745,7 +3757,8 @@ button {
   border-radius: 20px;
   padding: 3px;
   width: 100%;
-  max-width: 300px;
+  max-width: 320px;
+  box-sizing: border-box;
 }
 
 .diag-min-seg-item {
@@ -3754,15 +3767,16 @@ button {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 6px 12px;
+  padding: 6px 8px;
   border-radius: 16px;
   border: none;
   background: transparent;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .diag-min-seg-item.active {
@@ -3779,8 +3793,10 @@ button {
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: 10px;
-  padding: 9px 12px;
+  padding: 8px 12px;
   margin-bottom: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-search-icon {
@@ -3794,6 +3810,8 @@ button {
   font-size: 0.84rem;
   color: var(--text-primary);
   width: 100%;
+  min-width: 0;
+  flex: 1;
   outline: none;
 }
 
@@ -3814,6 +3832,8 @@ button {
 /* Chips Section */
 .diag-min-chips-section {
   margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-chips-head {
@@ -3842,22 +3862,27 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 10px;
+  padding: 5px 9px;
   border-radius: 14px;
   border: 1px solid var(--border-hairline);
   background: var(--bg-surface);
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.12s ease;
   line-height: 1.3;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
 }
 
 .diag-min-chip.selected {
@@ -3891,6 +3916,8 @@ button {
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-selected-text {
@@ -3899,6 +3926,8 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
+  flex: 1;
 }
 
 .diag-min-next-btn {
@@ -3928,22 +3957,34 @@ button {
 
 .diag-min-cat-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+  width: 100%;
   margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 340px) {
+  .diag-min-cat-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .diag-min-cat-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: 10px;
-  padding: 10px 10px;
+  padding: 9px 8px;
   text-align: left;
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .diag-min-cat-card:hover {
@@ -3952,9 +3993,9 @@ button {
 }
 
 .diag-min-cat-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
   background: var(--bg-subtle);
   color: var(--text-primary);
   display: flex;
@@ -3966,6 +4007,7 @@ button {
 .diag-min-cat-info {
   min-width: 0;
   flex: 1;
+  overflow: hidden;
 }
 
 .diag-min-cat-name {
@@ -3998,7 +4040,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   margin-bottom: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-back,
@@ -4013,16 +4058,21 @@ button {
   color: var(--text-secondary);
   cursor: pointer;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .diag-min-active-pill {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 600;
   background: var(--bg-subtle);
   border: 1px solid var(--border-hairline);
-  padding: 3px 10px;
+  padding: 3px 8px;
   border-radius: 12px;
   color: var(--text-primary);
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .diag-min-questions {
@@ -4030,13 +4080,18 @@ button {
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-q-item {
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .diag-min-q-num {
@@ -4045,12 +4100,15 @@ button {
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 8px;
+  word-break: break-word;
 }
 
 .diag-min-options {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-opt-btn {
@@ -4066,6 +4124,9 @@ button {
   font-size: 0.78rem;
   color: var(--text-primary);
   transition: all 0.12s ease;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .diag-min-opt-btn.selected {
@@ -4098,10 +4159,14 @@ button {
 
 .diag-min-opt-text {
   flex: 1;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .diag-min-footer-action {
   margin-top: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-action-btn {
@@ -4114,10 +4179,11 @@ button {
   color: var(--bg-app);
   border: none;
   border-radius: 8px;
-  padding: 13px;
-  font-size: 0.86rem;
+  padding: 12px;
+  font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 /* Step 3: Minimalist Decision Card */
@@ -4125,8 +4191,11 @@ button {
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: 12px;
-  padding: 16px;
+  padding: 14px;
   margin-bottom: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .diag-min-hero-tags {
@@ -4134,6 +4203,8 @@ button {
   gap: 5px;
   flex-wrap: wrap;
   margin-bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-sev-pill {
@@ -4191,12 +4262,14 @@ button {
   color: var(--text-primary);
   margin: 0 0 4px;
   letter-spacing: -0.01em;
+  word-break: break-word;
 }
 
 .diag-min-hero-age {
   font-size: 0.76rem;
   color: var(--text-secondary);
   margin-bottom: 8px;
+  word-break: break-word;
 }
 
 .diag-min-hero-desc {
@@ -4204,12 +4277,15 @@ button {
   color: var(--text-secondary);
   line-height: 1.45;
   margin: 0 0 12px;
+  word-break: break-word;
 }
 
 .diag-min-evidence {
   background: var(--bg-subtle);
   border-radius: 6px;
   padding: 8px 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-ev-label {
@@ -4228,6 +4304,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-ev-list li {
@@ -4236,6 +4314,8 @@ button {
   gap: 6px;
   font-size: 0.76rem;
   color: var(--text-primary);
+  min-width: 0;
+  word-break: break-word;
 }
 
 .diag-min-ev-list li svg {
@@ -4248,8 +4328,11 @@ button {
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: 10px;
-  padding: 14px;
+  padding: 13px;
   margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .diag-min-card.action {
@@ -4282,6 +4365,7 @@ button {
   letter-spacing: 0.04em;
   color: var(--text-primary);
   margin: 0;
+  word-break: break-word;
 }
 
 .diag-min-card.action .diag-min-card-head svg { color: #2E5E3A; }
@@ -4296,12 +4380,16 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-steps li {
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-step-idx {
@@ -4323,17 +4411,23 @@ button {
   font-size: 0.8rem;
   color: var(--text-primary);
   line-height: 1.4;
+  min-width: 0;
+  flex: 1;
+  word-break: break-word;
 }
 
 .diag-min-treatment-body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-t-row {
   font-size: 0.78rem;
   color: var(--text-secondary);
+  word-break: break-word;
 }
 
 .diag-min-t-row .t-val {
@@ -4347,6 +4441,7 @@ button {
   color: var(--text-primary);
   line-height: 1.4;
   margin: 0;
+  word-break: break-word;
 }
 
 .diag-min-t-note {
@@ -4354,6 +4449,7 @@ button {
   color: var(--text-tertiary);
   font-style: italic;
   margin: 0;
+  word-break: break-word;
 }
 
 .diag-min-bullet-list,
@@ -4364,6 +4460,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-bullet-list li,
@@ -4373,6 +4471,8 @@ button {
   gap: 6px;
   font-size: 0.78rem;
   line-height: 1.35;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .diag-min-bullet-list li svg { color: #2E5E3A; flex-shrink: 0; margin-top: 2px; }
@@ -4384,6 +4484,8 @@ button {
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-diff-card h4 {
@@ -4399,6 +4501,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-diff-row {
@@ -4407,24 +4511,35 @@ button {
   border-radius: 6px;
   padding: 8px 10px;
   cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-diff-top {
   display: flex;
   justify-content: space-between;
+  gap: 8px;
   margin-bottom: 2px;
 }
 
 .diff-name { font-size: 0.78rem; font-weight: 700; color: var(--text-primary); }
-.diff-pct { font-size: 0.7rem; font-weight: 600; color: var(--gold-text); }
-.diff-desc { font-size: 0.72rem; color: var(--text-tertiary); margin: 0; }
+.diff-pct { font-size: 0.7rem; font-weight: 600; color: var(--gold-text); white-space: nowrap; flex-shrink: 0; }
+.diff-desc { font-size: 0.72rem; color: var(--text-tertiary); margin: 0; word-break: break-word; }
 
 /* Sticky / Bottom Action Bar */
 .diag-min-action-bar {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-top: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 380px) {
+  .diag-min-action-bar {
+    grid-template-columns: 1fr;
+  }
 }
 
 .diag-min-btn-sec {
@@ -4436,10 +4551,13 @@ button {
   border: 1px solid var(--border-hairline);
   color: var(--text-primary);
   border-radius: 8px;
-  padding: 11px;
+  padding: 11px 8px;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .diag-min-btn-pri {
@@ -4451,10 +4569,13 @@ button {
   color: var(--bg-app);
   border: none;
   border-radius: 8px;
-  padding: 11px;
+  padding: 11px 8px;
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 /* Minimal Library / Catalog */
@@ -4462,6 +4583,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-lib-search {
@@ -4472,6 +4595,8 @@ button {
   border: 1px solid var(--border-hairline);
   border-radius: 8px;
   padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-lib-search input {
@@ -4480,6 +4605,8 @@ button {
   font-size: 0.82rem;
   color: var(--text-primary);
   width: 100%;
+  min-width: 0;
+  flex: 1;
   outline: none;
 }
 
@@ -4488,6 +4615,7 @@ button {
   border: none;
   color: var(--text-tertiary);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .diag-min-cat-pills {
@@ -4496,6 +4624,8 @@ button {
   overflow-x: auto;
   padding-bottom: 4px;
   scrollbar-width: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-cat-pills::-webkit-scrollbar {
@@ -4525,6 +4655,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-lib-item {
@@ -4534,6 +4666,10 @@ button {
   padding: 12px;
   cursor: pointer;
   transition: all 0.12s ease;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .diag-min-lib-item:hover {
@@ -4544,12 +4680,15 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 6px;
   margin-bottom: 4px;
+  width: 100%;
 }
 
 .diag-min-lib-tags {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .lib-min-sev {
@@ -4577,6 +4716,7 @@ button {
 .lib-min-arrow {
   color: var(--text-tertiary);
   opacity: 0.4;
+  flex-shrink: 0;
 }
 
 .diag-min-lib-name {
@@ -4584,6 +4724,7 @@ button {
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 2px;
+  word-break: break-word;
 }
 
 .diag-min-lib-age {
@@ -4600,32 +4741,53 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 
-/* Minimal Modal */
+/* Minimal Modal & Backdrop */
+.diag-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
 .diag-min-modal {
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: 12px;
   max-width: 500px;
   width: 100%;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
   padding: 16px;
+  box-shadow: var(--shadow-float);
+  box-sizing: border-box;
 }
 
 .diag-min-modal-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 8px;
   border-bottom: 1px solid var(--border-hairline);
   padding-bottom: 10px;
   margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-modal-tags {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
   margin-bottom: 4px;
 }
 
@@ -4634,6 +4796,7 @@ button {
   font-weight: 800;
   color: var(--text-primary);
   margin: 0 0 2px;
+  word-break: break-word;
 }
 
 .diag-min-modal-age {
@@ -4647,12 +4810,15 @@ button {
   color: var(--text-tertiary);
   cursor: pointer;
   padding: 2px;
+  flex-shrink: 0;
 }
 
 .diag-min-modal-body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .diag-min-modal-block h4 {
@@ -4671,6 +4837,7 @@ button {
   font-size: 0.78rem;
   color: var(--text-primary);
   line-height: 1.4;
+  word-break: break-word;
 }
 
 .diag-min-modal-block.action {
@@ -4693,6 +4860,8 @@ button {
   margin-top: 14px;
   border-top: 1px solid var(--border-hairline);
   padding-top: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 

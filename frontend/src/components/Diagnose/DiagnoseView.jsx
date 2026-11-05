@@ -395,7 +395,7 @@ const DiagnoseView = ({ onSaveToRecords, onNavigate }) => {
                 <div className="diag-min-selected-bar">
                   <div className="diag-min-selected-text">
                     <strong>{selectedSymptoms.length} selected:</strong>{' '}
-                    <span>{selectedSymptoms.join(', ')}</span>
+                    <span>{selectedSymptoms.slice(0, 2).join(', ')}{selectedSymptoms.length > 2 ? ` +${selectedSymptoms.length - 2} more` : ''}</span>
                   </div>
                   <button
                     type="button"
@@ -427,13 +427,12 @@ const DiagnoseView = ({ onSaveToRecords, onNavigate }) => {
                       onClick={() => handleSelectCategory(cat.id)}
                     >
                       <div className="diag-min-cat-icon">
-                        <IconComp size={18} />
+                        <IconComp size={16} />
                       </div>
                       <div className="diag-min-cat-info">
                         <h3 className="diag-min-cat-name">{cat.title}</h3>
                         <span className="diag-min-cat-sub">{cat.subtitle}</span>
                       </div>
-                      <ChevronRight size={14} className="diag-min-cat-arrow" />
                     </button>
                   );
                 })}
