@@ -75,6 +75,7 @@ app.use('/api/health-events', require('./routes/healthEvents'));
 app.use('/api/deaths',        require('./routes/deaths'));
 app.use('/api/finances',      require('./routes/finances'));
 app.use('/api/vaccine-guide', require('./routes/vaccineGuide'));
+app.use('/api/broiler-diseases', require('./routes/broilerDiseases'));
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((req, res) => {

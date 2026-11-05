@@ -140,3 +140,18 @@ export const deleteFinance = (id) =>
 // ── Health check ──────────────────────────────────────────────────────────────
 
 export const checkApiHealth = () => api('/api/health');
+
+// ── Broiler Diseases Catalog ──────────────────────────────────────────────────
+
+export const fetchBroilerDiseases = (params = {}) => {
+  const query = new URLSearchParams();
+  if (params.category && params.category !== 'All') query.set('category', params.category);
+  if (params.severity && params.severity !== 'All') query.set('severity', params.severity);
+  if (params.emergency !== undefined) query.set('emergency', params.emergency);
+  if (params.search) query.set('search', params.search);
+  const qs = query.toString();
+  return api('/api/broiler-diseases' + (qs ? '?' + qs : ''));
+};
+
+export const fetchBroilerDiseaseById = (id) =>
+  api('/api/broiler-diseases/' + id);
